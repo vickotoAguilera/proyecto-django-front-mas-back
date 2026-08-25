@@ -1,0 +1,162 @@
+{
+  "categorias": [
+    {
+      "id": 1,
+      "nombre": "Programación y Desarrollo",
+      "descripcion": "Cursos para aprender a crear software con lenguajes como Python y JavaScript."
+    },
+    {
+      "id": 2,
+      "nombre": "Diseño y UX/UI",
+      "descripcion": "Cursos de diseño de interfaces, experiencia de usuario y desarrollo frontend."
+    },
+    {
+      "id": 3,
+      "nombre": "Datos e Inteligencia Artificial",
+      "descripcion": "Cursos de bases de datos, análisis de datos y machine learning."
+    },
+    {
+      "id": 4,
+      "nombre": "Marketing Digital",
+      "descripcion": "Cursos de marketing online, redes sociales y estrategia digital."
+    }
+  ],
+  "instructores": [
+    {
+      "id": 1,
+      "nombre": "Camila Rojas",
+      "especialidad": "Desarrollo Backend y Django",
+      "email": "camila.rojas@academia.edu",
+      "anios_experiencia": 8
+    },
+    {
+      "id": 2,
+      "nombre": "Diego Fuentes",
+      "especialidad": "Desarrollo Frontend y UX/UI",
+      "email": "diego.fuentes@academia.edu",
+      "anios_experiencia": 6
+    },
+    {
+      "id": 3,
+      "nombre": "Valentina Soto",
+      "especialidad": "Machine Learning y Ciencia de Datos",
+      "email": "valentina.soto@academia.edu",
+      "anios_experiencia": 10
+    },
+    {
+      "id": 4,
+      "nombre": "Matías Herrera",
+      "especialidad": "Marketing Digital y SEO",
+      "email": "matias.herrera@academia.edu",
+      "anios_experiencia": 5
+    },
+    {
+      "id": 5,
+      "nombre": "Francisca Muñoz",
+      "especialidad": "Bases de Datos y SQL",
+      "email": "francisca.munoz@academia.edu",
+      "anios_experiencia": 7
+    }
+  ],
+  "cursos": [
+    {
+      "id": 1,
+      "titulo": "Python desde cero",
+      "slug": "python-desde-cero",
+      "descripcion": "Aprende los fundamentos del lenguaje Python: variables, operadores, estructuras de control, funciones y manejo de errores. Ideal para quienes nunca han programado.",
+      "nivel": "Básico",
+      "duracion_horas": 40,
+      "precio": 25000,
+      "categoria_id": 1,
+      "instructor_id": 1
+    },
+    {
+      "id": 2,
+      "titulo": "Django: desarrollo web con Python",
+      "slug": "django-desarrollo-web",
+      "descripcion": "Crea aplicaciones web completas con el framework Django: modelos, vistas, templates, formularios y autenticación de usuarios.",
+      "nivel": "Intermedio",
+      "duracion_horas": 60,
+      "precio": 45000,
+      "categoria_id": 1,
+      "instructor_id": 1
+    },
+    {
+      "id": 3,
+      "titulo": "JavaScript moderno",
+      "slug": "javascript-moderno",
+      "descripcion": "Domina el lenguaje de la web: variables, funciones, arreglos, objetos, promesas y manipulación del DOM para construir páginas interactivas.",
+      "nivel": "Intermedio",
+      "duracion_horas": 45,
+      "precio": 32000,
+      "categoria_id": 1,
+      "instructor_id": 2
+    },
+    {
+      "id": 4,
+      "titulo": "Diseño UX/UI con Figma",
+      "slug": "diseno-ux-ui-figma",
+      "descripcion": "Aprende a diseñar interfaces centradas en el usuario: investigación, wireframes, prototipos interactivos y sistemas de diseño con Figma.",
+      "nivel": "Básico",
+      "duracion_horas": 30,
+      "precio": 28000,
+      "categoria_id": 2,
+      "instructor_id": 2
+    },
+    {
+      "id": 5,
+      "titulo": "Machine Learning aplicado",
+      "slug": "machine-learning-aplicado",
+      "descripcion": "Construye modelos de machine learning con Python: regresión, clasificación, árboles de decisión y evaluación de modelos con datos reales.",
+      "nivel": "Avanzado",
+      "duracion_horas": 70,
+      "precio": 60000,
+      "categoria_id": 3,
+      "instructor_id": 3
+    },
+    {
+      "id": 6,
+      "titulo": "SQL y bases de datos relacionales",
+      "slug": "sql-bases-datos-relacionales",
+      "descripcion": "Aprende a diseñar bases de datos, escribir consultas SQL, relacionar tablas y optimizar el rendimiento de las consultas.",
+      "nivel": "Intermedio",
+      "duracion_horas": 35,
+      "precio": 30000,
+      "categoria_id": 3,
+      "instructor_id": 5
+    },
+    {
+      "id": 7,
+      "titulo": "Marketing digital 360",
+      "slug": "marketing-digital-360",
+      "descripcion": "Estrategia de marketing online completa: SEO, Google Ads, redes sociales, email marketing y análisis de métricas.",
+      "nivel": "Básico",
+      "duracion_horas": 25,
+      "precio": 22000,
+      "categoria_id": 4,
+      "instructor_id": 4
+    },
+    {
+      "id": 8,
+      "titulo": "APIs REST con Django Rest Framework",
+      "slug": "apis-rest-django-rest-framework",
+      "descripcion": "Diseña e implementa APIs REST profesionales: serializers, viewsets, autenticación, permisos y documentación de endpoints.",
+      "nivel": "Avanzado",
+      "duracion_horas": 50,
+      "precio": 48000,
+      "categoria_id": 1,
+      "instructor_id": 1
+    },
+    {
+      "id": 9,
+      "titulo": "Frontend con HTML, CSS y JavaScript",
+      "slug": "frontend-html-css-javascript",
+      "descripcion": "Crea sitios web modernos y responsivos: estructura semántica, estilos con CSS, flexbox, grid y animaciones con JavaScript.",
+      "nivel": "Básico",
+      "duracion_horas": 35,
+      "precio": 26000,
+      "categoria_id": 2,
+      "instructor_id": 2
+    }
+  ]
+}

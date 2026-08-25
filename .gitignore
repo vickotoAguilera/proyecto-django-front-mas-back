@@ -1,0 +1,18 @@
+# Entornos virtuales
+venv/
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Base de datos
+db.sqlite3
+
+# Guía de defensa (nunca se sube)
+pasos.md
+
+# IDE
+.vscode/
+.idea/
