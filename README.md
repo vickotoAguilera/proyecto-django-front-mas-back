@@ -60,28 +60,59 @@ Y `migrate` creó todas las tablas de la base de datos.
 
 ---
 
-## Próximos pasos (lo que sigue)
+**Paso 6 — Comando de carga de datos desde JSON (indicador 2 y 11):** creé el management command `cursos/management/commands/cargar_datos.py` que lee el archivo `front/data/cursos.json` y puebla la base de datos usando `update_or_create`. Lo ejecuté con `python manage.py cargar_datos` y cargó exitosamente:
+- 4 Categorías
+- 5 Instructores
+- 9 Cursos
 
-- [ ] Crear el management command `cargar_datos` que lee `cursos.json` y puebla la base de datos.
-- [ ] Ejecutarlo y verificar que los datos quedaron cargados.
-- [ ] Convertir el front en templates de Django (base, listado, detalle).
-- [ ] Vistas, urls y admin.
-- [ ] Revisar los 12 indicadores de la rúbrica al 100%.
+**Paso 7 — Panel de Administración (prepara Eval 2):** registré los modelos en `cursos/admin.py` usando `@admin.register` con filtros (`list_filter`), buscadores (`search_fields`) y `prepopulated_fields` para el slug. Creé el superusuario con `python manage.py createsuperuser`.
+
+**Paso 8 — Configuración de Static y Templates (indicador 8):** configuré `BASE_DIR / 'templates'` en `TEMPLATES['DIRS']` y `STATICFILES_DIRS` en `config/settings.py`. Copié los estilos CSS a `static/css/style.css`.
+
+**Paso 9 — Plantillas Django (MVT, indicador 5 y 8):**
+- `templates/base.html`: plantilla base con herencia (`{% block content %}`), navbar, estilos con `{% static %}` y enlaces dinámicos con `{% url %}`.
+- `templates/index.html`: catálogo completo con buscador, filtros dinámicos por categoría, estadísticas y tarjetas de cursos.
+- `templates/detalle.html`: ficha individual del curso con datos del instructor y cursos relacionados de la misma categoría.
+
+**Paso 10 — Vistas y URLs (indicador 2, 5 y 8):**
+- Creé las vistas en `cursos/views.py`: `index` (con búsqueda `Q`, filtros por categoría y estadísticas) y `detalle_curso` (por slug, con cursos relacionados).
+- Conecté las rutas en `cursos/urls.py` e incluí la app en `config/urls.py`.
+- Probé todo con `python manage.py runserver` en `http://127.0.0.1:8000/` funcionando al 100%.
+
+---
+
+## Estado del Proyecto
+
+- [x] Crear datos de prueba en JSON con IA (indicador 11).
+- [x] Crear el frontend standalone (`front/`).
+- [x] Crear entorno virtual e instalar Django y django-filter (indicador 3 y 6).
+- [x] Modelos Django con relaciones ForeignKey (indicador 7).
+- [x] Migraciones y creación de la BD SQLite (indicador 6).
+- [x] Management command `cargar_datos` (indicador 2 y 11).
+- [x] Registro en Django Admin con superusuario.
+- [x] Configuración de templates y archivos estáticos (indicador 8).
+- [x] Vistas y URLs de catálogo y detalle (indicador 2, 5 y 8).
+- [x] Pruebas en servidor local `runserver` (indicador 4 y 9).
 
 ---
 
 ## Cómo correr el proyecto
 
-**Front solo (sin Django):**
+**1. Activar el entorno virtual:**
+```powershell
+.\venv\Scripts\Activate.ps1
 ```
+
+**2. Ejecutar el servidor de Django:**
+```powershell
+python manage.py runserver
+```
+→ Web principal: http://127.0.0.1:8000/
+→ Panel de administración: http://127.0.0.1:8000/admin/
+
+**3. (Opcional) Front standalone sin Django:**
+```powershell
 cd front
 python -m http.server 3000
 ```
 → http://localhost:3000
-
-**Django:**
-```
-venv\Scripts\Activate.ps1
-python manage.py runserver
-```
-→ http://127.0.0.1:8000

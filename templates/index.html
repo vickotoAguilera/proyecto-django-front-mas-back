@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio — Academia Verde{% endblock %}
+{% block page_name %}inicio{% endblock %}
+
+{% block content %}
+  <header class="hero">
+    <div class="hero__inner">
+      <span class="hero__tag">Directorio de cursos en línea</span>
+      <h1>Encuentra el curso perfecto para impulsar tu carrera</h1>
+      <p>Explora nuestra oferta académica: programación, diseño, datos y marketing digital.</p>
+
+      <form method="GET" action="{% url 'inicio' %}#cursos" class="hero__search" role="search">
+        <input name="q" value="{{ busqueda }}" type="search" placeholder="Buscar cursos por nombre o descripción..." aria-label="Buscar cursos">
+        {% if categoria_seleccionada %}
+          <input type="hidden" name="categoria" value="{{ categoria_seleccionada }}">
+        {% endif %}
+        <button type="submit">Buscar</button>
+      </form>
+
+      <div class="hero__stats">
+        <div><span>{{ total_cursos }}</span><small>Cursos</small></div>
+        <div><span>{{ total_categorias }}</span><small>Categorías</small></div>
+        <div><span>{{ total_instructores }}</span><small>Instructores</small></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="courses" id="cursos">
+    <div class="courses__head">
+      <h2>Catálogo de cursos</h2>
+      <span class="courses__count">{{ cursos.count }} curso{{ cursos.count|pluralize:"s" }} encontrado{{ cursos.count|pluralize:"s" }}</span>
+    </div>
+
+    <!-- Filtros de categoría -->
+    <div class="filters">
+      <a href="{% url 'inicio' %}?q={{ busqueda }}#cursos" class="filter-pill {% if not categoria_seleccionada %}active{% endif %}">
+        Todos
+      </a>
+      {% for cat in categorias %}
+        <a href="{% url 'inicio' %}?categoria={{ cat.id }}&q={{ busqueda }}#cursos" 
+           class="filter-pill {% if categoria_seleccionada == cat.id %}active{% endif %}">
+          {{ cat.nombre }}
+        </a>
+      {% endfor %}
+    </div>
+
+    <!-- Grilla de tarjetas de cursos -->
+    <div class="grid">
+      {% for curso in cursos %}
+        <a class="card" href="{% url 'detalle_curso' curso.slug %}">
+          <div class="card__top">
+            <span class="category-badge">{{ curso.categoria.nombre }}</span>
+            <span class="level-badge {% if curso.nivel == 'Básico' %}basico{% elif curso.nivel == 'Intermedio' %}intermedio{% else %}avanzado{% endif %}">
+              {{ curso.nivel }}
+            </span>
+          </div>
+          <h3>{{ curso.titulo }}</h3>
+          <p class="card__desc">{{ curso.descripcion }}</p>
+          <div class="card__meta">
+            <span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              {{ curso.duracion_horas }} horas
+            </span>
+            <span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+              {{ curso.instructor.nombre }}
+            </span>
+          </div>
+          <div class="card__bottom">
+            <span class="price">${{ curso.precio }}</span>
+            <span class="card__link">Ver detalle →</span>
+          </div>
+        </a>
+      {% empty %}
+        <div class="empty" style="grid-column: 1 / -1;">
+          <h3>Sin resultados</h3>
+          <p>No encontramos cursos que coincidan con tu búsqueda.</p>
+          <a href="{% url 'inicio' %}#cursos" class="filter-pill" style="display:inline-block; margin-top:14px;">Limpiar filtros</a>
+        </div>
+      {% endfor %}
+    </div>
+  </main>
+{% endblock %}

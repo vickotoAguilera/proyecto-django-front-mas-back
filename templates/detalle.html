@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ curso.titulo }} — Academia Verde{% endblock %}
+{% block page_name %}detalle{% endblock %}
+
+{% block content %}
+<main class="detail">
+    <nav class="breadcrumb">
+        <a href="{% url 'inicio' %}">Inicio</a>
+        <span> / {{ curso.categoria.nombre }} / {{ curso.titulo }}</span>
+    </nav>
+
+    <div class="detail__grid">
+        <section class="detail__main">
+            <span class="category-badge">{{ curso.categoria.nombre }}</span>
+            <span
+                class="level-badge {% if curso.nivel == 'Básico' %}basico{% elif curso.nivel == 'Intermedio' %}intermedio{% else %}avanzado{% endif %}"
+                style="margin-left:8px">
+                {{ curso.nivel }}
+            </span>
+            <h1>{{ curso.titulo }}</h1>
+            <p class="lead">{{ curso.descripcion }}</p>
+
+            <ul class="info-list">
+                <li><small>Categoría</small><strong>{{ curso.categoria.nombre }}</strong></li>
+                <li><small>Nivel</small><strong>{{ curso.nivel }}</strong></li>
+                <li><small>Duración</small><strong>{{ curso.duracion_horas }} horas</strong></li>
+                <li><small>Precio</small><strong>${{ curso.precio }}</strong></li>
+            </ul>
+        </section>
+
+        <aside class="detail__side">
+            <div class="instructor-card">
+                <span class="avatar avatar--lg">{{ curso.instructor.nombre|slice:":2"|upper }}</span>
+                <h3>{{ curso.instructor.nombre }}</h3>
+                <p>{{ curso.instructor.especialidad }}</p>
+                <p>{{ curso.instructor.anios_experiencia }} años de experiencia</p>
+                <a class="btn" href="mailto:{{ curso.instructor.email }}">Contactar al instructor</a>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Cursos relacionados de la misma categoría -->
+    <section class="related">
+        <h2>Cursos relacionados</h2>
+        {% if relacionados %}
+        <div class="grid">
+            {% for rel in relacionados %}
+            <a class="card" href="{% url 'detalle_curso' rel.slug %}">
+                <div class="card__top">
+                    <span class="category-badge">{{ rel.categoria.nombre }}</span>
+                    <span
+                        class="level-badge {% if rel.nivel == 'Básico' %}basico{% elif rel.nivel == 'Intermedio' %}intermedio{% else %}avanzado{% endif %}">
+                        {{ rel.nivel }}
+                    </span>
+                </div>
+                <h3>{{ rel.titulo }}</h3>
+                <p class="card__desc">{{ rel.descripcion }}</p>
+                <div class="card__bottom">
+                    <span class="price">${{ rel.precio }}</span>
+                    <span class="card__link">Ver detalle →</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p style="color:var(--muted)">No hay otros cursos en esta categoría.</p>
+        {% endif %}
+    </section>
+</main>
+{% endblock %}

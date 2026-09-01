@@ -17,32 +17,32 @@
 - [x] 2.2 Crear proyecto Django y la app `cursos` (indicador 4 y 6)
 - [x] 2.3 Escribir modelos `Categoria`, `Instructor`, `Curso` con relaciones FK (indicador 7)
 - [x] 2.4 Hacer migraciones y crear la BD (indicador 6)
-- [ ] 2.5 Crear el management command `cargar_datos` que lee el JSON y puebla la BD (indicador 2 y 11)
-- [ ] 2.6 Ejecutar `cargar_datos` y verificar datos en la BD
+- [x] 2.5 Crear el management command `cargar_datos` que lee el JSON y puebla la BD (indicador 2 y 11)
+- [x] 2.6 Ejecutar `cargar_datos` y verificar datos en la BD
 
 ## Fase 3 — Conexión front ↔ Django (la hace el usuario, guiado)
 
-- [ ] 3.1 Configurar `static/` para CSS y JS (indicador 8)
-- [ ] 3.2 Convertir los HTML en templates Django: `base.html`, `index.html`, `detalle.html`
-- [ ] 3.3 Crear vistas de listado con búsqueda y filtros (GET) y de detalle por slug (indicador 2 y 5)
-- [ ] 3.4 Crear las urls y conectarlas con `{% url %}` (indicador 5)
-- [ ] 3.5 Registrar los modelos en el admin (prepara eval 2)
-- [ ] 3.6 Probar todo con `python manage.py runserver`
+- [x] 3.1 Configurar `static/` para CSS y JS (indicador 8)
+- [x] 3.2 Convertir los HTML en templates Django: `base.html`, `index.html`, `detalle.html`
+- [x] 3.3 Crear vistas de listado con búsqueda y filtros (GET) y de detalle por slug (indicador 2 y 5)
+- [x] 3.4 Crear las urls y conectarlas con `{% url %}` (indicador 5)
+- [x] 3.5 Registrar los modelos en el admin (prepara eval 2)
+- [x] 3.6 Probar todo con `python manage.py runserver`
 
 ## Fase 4 — Verificación de la rúbrica (100%)
 
-- [ ] 4.1 Indicador 1: identificar variables y operaciones (explicación del código)
-- [ ] 4.2 Indicador 2: instrucciones, estructuras y operadores (vistas y comandos)
-- [ ] 4.3 Indicador 3: paquetes externos (`django-filter`)
-- [ ] 4.4 Indicador 4: aplicación Django funcional
-- [ ] 4.5 Indicador 5: modelo MVC aplicado (separación models/views/templates)
-- [ ] 4.6 Indicador 6: entorno Django configurado y documentado
-- [ ] 4.7 Indicador 7: Django Models con relaciones
-- [ ] 4.8 Indicador 8: vistas y templates integrados
-- [ ] 4.9 Indicador 9: tecnologías del lado del servidor
-- [ ] 4.10 Indicador 10: uso de IA documentado (prompts usados)
-- [ ] 4.11 Indicador 11: datos de prueba generados y usados con IA
-- [ ] 4.12 Indicador 12: protocolos, hosting y dominios explicados
+- [x] 4.1 Indicador 1: identificar variables y operaciones (explicación del código)
+- [x] 4.2 Indicador 2: instrucciones, estructuras y operadores (vistas y comandos)
+- [x] 4.3 Indicador 3: paquetes externos (`django-filter`)
+- [x] 4.4 Indicador 4: aplicación Django funcional
+- [x] 4.5 Indicador 5: modelo MVC aplicado (separación models/views/templates)
+- [x] 4.6 Indicador 6: entorno Django configurado y documentado
+- [x] 4.7 Indicador 7: Django Models con relaciones
+- [x] 4.8 Indicador 8: vistas y templates integrados
+- [x] 4.9 Indicador 9: tecnologías del lado del servidor
+- [x] 4.10 Indicador 10: uso de IA documentado (prompts usados)
+- [x] 4.11 Indicador 11: datos de prueba generados y usados con IA
+- [x] 4.12 Indicador 12: protocolos, hosting y dominios explicados
 
 ## Prompts de IA documentados (indicador 10)
 
