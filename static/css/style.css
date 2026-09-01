@@ -96,14 +96,22 @@ body {
   background: var(--emerald-100);
 }
 
-.badge {
+.badge,
+.navbar__links a.badge {
   background: var(--emerald-600);
-  color: #fff;
-  font-size: 0.72rem;
+  color: #ffffff !important;
+  font-size: 0.75rem;
   font-weight: 600;
-  padding: 5px 10px;
+  padding: 6px 12px;
   border-radius: 999px;
   white-space: nowrap;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.navbar__links a.badge:hover {
+  background: var(--emerald-700);
+  color: #ffffff !important;
 }
 
 /* ---------- Hero ---------- */
@@ -220,13 +228,16 @@ body {
 }
 
 .courses__head h2 {
-  color: var(--emerald-900);
-  font-size: 1.5rem;
+  color: #ffffff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .courses__count {
-  color: var(--muted);
+  color: var(--emerald-100);
   font-size: 0.95rem;
+  font-weight: 500;
 }
 
 /* Filtros por categoría */
@@ -239,7 +250,7 @@ body {
 }
 
 .filter-pill {
-  background: #fff;
+  background: #ffffff;
   border: 1.5px solid var(--emerald-200);
   color: var(--emerald-800);
   font-family: inherit;
@@ -249,17 +260,24 @@ body {
   border-radius: 999px;
   cursor: pointer;
   transition: all 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 
 .filter-pill:hover {
   border-color: var(--emerald-500);
   background: var(--emerald-50);
+  color: var(--emerald-950);
+  text-decoration: none;
 }
 
 .filter-pill.active {
   background: var(--emerald-600);
   border-color: var(--emerald-600);
-  color: #fff;
+  color: #ffffff !important;
+  text-decoration: none;
+  font-weight: 600;
 }
 
 /* Grilla de tarjetas */
