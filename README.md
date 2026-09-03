@@ -79,6 +79,17 @@ Y `migrate` creó todas las tablas de la base de datos.
 - Conecté las rutas en `cursos/urls.py` e incluí la app en `config/urls.py`.
 - Probé todo con `python manage.py runserver` en `http://127.0.0.1:8000/` funcionando al 100%.
 
+**Paso 11 — Ajustes finales de código y verificación general:**
+- Realicé una revisión completa de los modelos, vistas y rutas para asegurar que todo estuviera correctamente estructurado, validando consultas del ORM y preparando la arquitectura de red para la evaluación.
+
+---
+
+## Arquitectura, Protocolos y Despliegue (Indicador 12)
+
+- **Protocolo de comunicación:** en desarrollo la aplicación corre sobre **HTTP** estándar. El cliente (navegador) solicita recursos al servidor local de Django (`127.0.0.1` o `localhost`) en el puerto `8000` mediante peticiones GET.
+- **Servicio de Hosting recomendado:** para pasar a producción se propone el despliegue en un PaaS como **Render** o **PythonAnywhere**, ejecutando la aplicación con un servidor WSGI de producción como **Gunicorn** y una base de datos PostgreSQL gestionada.
+- **Dominio y Seguridad:** se conectaría un dominio personalizado (ej. `midirectorio.cl`) configurando registros DNS de tipo A y CNAME hacia el hosting, implementando **HTTPS** mediante certificados SSL/TLS automáticos (Let's Encrypt) para garantizar el cifrado de datos.
+
 ---
 
 ## Estado del Proyecto
@@ -93,6 +104,8 @@ Y `migrate` creó todas las tablas de la base de datos.
 - [x] Configuración de templates y archivos estáticos (indicador 8).
 - [x] Vistas y URLs de catálogo y detalle (indicador 2, 5 y 8).
 - [x] Pruebas en servidor local `runserver` (indicador 4 y 9).
+- [x] Últimos ajustes y verificación general en el código del backend.
+- [x] Documentación de protocolos, hosting y despliegue (indicador 12).
 
 ---
 
