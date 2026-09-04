@@ -77,21 +77,27 @@ function showDataError() {
 function cardHTML(curso) {
   const cat = buscarCategoria(curso.categoria_id);
   const instr = buscarInstructor(curso.instructor_id);
+  const imgSrc = curso.imagen || `img/cursos/${curso.slug}.jpg`;
   return `
     <a class="card" href="detalle.html?id=${curso.id}">
-      <div class="card__top">
-        <span class="category-badge">${cat ? cat.nombre : "Sin categoría"}</span>
+      <div class="card__cover" style="position: relative; width: 100%; height: 185px; overflow: hidden; background: var(--emerald-100);">
+        <img src="${imgSrc}" alt="${curso.titulo}" class="card__img" style="width: 100%; height: 100%; object-fit: cover; display: block;" loading="lazy">
         <span class="level-badge ${levelClass(curso.nivel)}">${curso.nivel}</span>
       </div>
-      <h3>${curso.titulo}</h3>
-      <p class="card__desc">${curso.descripcion}</p>
-      <div class="card__meta">
-        <span>${ICONS.clock} ${curso.duracion_horas} horas</span>
-        <span>${ICONS.user} ${instr ? instr.nombre : "Sin instructor"}</span>
-      </div>
-      <div class="card__bottom">
-        <span class="price">${formatPrice(curso.precio)}</span>
-        <span class="card__link">Ver detalle ${ICONS.arrow}</span>
+      <div class="card__body">
+        <div class="card__top">
+          <span class="category-badge">${cat ? cat.nombre : "Sin categoría"}</span>
+        </div>
+        <h3>${curso.titulo}</h3>
+        <p class="card__desc">${curso.descripcion}</p>
+        <div class="card__meta">
+          <span>${ICONS.clock} ${curso.duracion_horas} horas</span>
+          <span>${ICONS.user} ${instr ? instr.nombre : "Sin instructor"}</span>
+        </div>
+        <div class="card__bottom">
+          <span class="price">${formatPrice(curso.precio)}</span>
+          <span class="card__link">Ver detalle ${ICONS.arrow}</span>
+        </div>
       </div>
     </a>`;
 }
@@ -161,8 +167,12 @@ function initIndex() {
 function renderDetalle(curso) {
   const cat = buscarCategoria(curso.categoria_id);
   const instr = buscarInstructor(curso.instructor_id);
+  const imgSrc = curso.imagen || `img/cursos/${curso.slug}.jpg`;
 
   $("#detalleMain").innerHTML = `
+    <div class="detail__cover">
+      <img src="${imgSrc}" alt="${curso.titulo}" class="detail__cover-img">
+    </div>
     <span class="category-badge">${cat ? cat.nombre : "Sin categoría"}</span>
     <span class="level-badge ${levelClass(curso.nivel)}" style="margin-left:8px">${curso.nivel}</span>
     <h1>${curso.titulo}</h1>

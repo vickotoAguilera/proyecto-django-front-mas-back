@@ -67,6 +67,7 @@
       "nivel": "Básico",
       "duracion_horas": 40,
       "precio": 25000,
+      "imagen": "img/cursos/python-desde-cero.jpg",
       "categoria_id": 1,
       "instructor_id": 1
     },
@@ -78,6 +79,7 @@
       "nivel": "Intermedio",
       "duracion_horas": 60,
       "precio": 45000,
+      "imagen": "img/cursos/django-desarrollo-web.jpg",
       "categoria_id": 1,
       "instructor_id": 1
     },
@@ -89,6 +91,7 @@
       "nivel": "Intermedio",
       "duracion_horas": 45,
       "precio": 32000,
+      "imagen": "img/cursos/javascript-moderno.jpg",
       "categoria_id": 1,
       "instructor_id": 2
     },
@@ -100,6 +103,7 @@
       "nivel": "Básico",
       "duracion_horas": 30,
       "precio": 28000,
+      "imagen": "img/cursos/diseno-ux-ui-figma.jpg",
       "categoria_id": 2,
       "instructor_id": 2
     },
@@ -111,6 +115,7 @@
       "nivel": "Avanzado",
       "duracion_horas": 70,
       "precio": 60000,
+      "imagen": "img/cursos/machine-learning-aplicado.jpg",
       "categoria_id": 3,
       "instructor_id": 3
     },
@@ -122,6 +127,7 @@
       "nivel": "Intermedio",
       "duracion_horas": 35,
       "precio": 30000,
+      "imagen": "img/cursos/sql-bases-datos-relacionales.jpg",
       "categoria_id": 3,
       "instructor_id": 5
     },
@@ -133,6 +139,7 @@
       "nivel": "Básico",
       "duracion_horas": 25,
       "precio": 22000,
+      "imagen": "img/cursos/marketing-digital-360.jpg",
       "categoria_id": 4,
       "instructor_id": 4
     },
@@ -144,6 +151,7 @@
       "nivel": "Avanzado",
       "duracion_horas": 50,
       "precio": 48000,
+      "imagen": "img/cursos/apis-rest-django-rest-framework.jpg",
       "categoria_id": 1,
       "instructor_id": 1
     },
@@ -155,6 +163,7 @@
       "nivel": "Básico",
       "duracion_horas": 35,
       "precio": 26000,
+      "imagen": "img/cursos/frontend-html-css-javascript.jpg",
       "categoria_id": 2,
       "instructor_id": 2
     }

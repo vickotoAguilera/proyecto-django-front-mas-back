@@ -28,6 +28,12 @@
   box-sizing: border-box;
 }
 
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -292,18 +298,60 @@ body {
   background: var(--card);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 26px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 14px;
   text-decoration: none;
   color: inherit;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  height: 100%;
 }
 
 .card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
   box-shadow: var(--shadow-hover);
+}
+
+.card__cover {
+  position: relative;
+  width: 100%;
+  height: 185px;
+  min-height: 185px;
+  max-height: 185px;
+  overflow: hidden;
+  background: var(--emerald-100);
+}
+
+.card__img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: cover !important;
+  display: block !important;
+  transition: transform 0.4s ease;
+}
+
+.card:hover .card__img {
+  transform: scale(1.05);
+}
+
+.card__cover .level-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.16);
+  z-index: 2;
+}
+
+.card__body {
+  padding: 20px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 12px;
 }
 
 .card__top {
@@ -493,6 +541,24 @@ body {
   padding: 30px;
 }
 
+.detail__cover {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  aspect-ratio: 16 / 9;
+  max-height: 340px;
+  box-shadow: 0 4px 16px rgba(6, 78, 59, 0.1);
+  background: var(--emerald-100);
+}
+
+.detail__cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .detail__main h1 {
   font-size: clamp(1.5rem, 3vw, 2.1rem);
   color: var(--emerald-950);
@@ -654,6 +720,28 @@ body {
 
   .grid {
     grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .card__body {
+    padding: 16px 18px 20px;
+    gap: 10px;
+  }
+
+  .card__cover {
+    aspect-ratio: 16 / 9;
+    max-height: 220px;
+  }
+
+  .detail__cover {
+    max-height: 210px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+  }
+
+  .detail__main,
+  .detail__side {
+    padding: 20px;
   }
 
   .navbar__links a:not(.badge) {

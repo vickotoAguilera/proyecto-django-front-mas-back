@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}{{ curso.titulo }} — Academia Verde{% endblock %}
 {% block page_name %}detalle{% endblock %}
@@ -12,6 +13,9 @@
 
     <div class="detail__grid">
         <section class="detail__main">
+            <div class="detail__cover" style="width: 100%; height: 280px; max-height: 280px; overflow: hidden; border-radius: 12px; margin-bottom: 24px; background: var(--emerald-100);">
+                <img src="{% static 'img/cursos/' %}{{ curso.slug }}.jpg" alt="{{ curso.titulo }}" class="detail__cover-img" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+            </div>
             <span class="category-badge">{{ curso.categoria.nombre }}</span>
             <span
                 class="level-badge {% if curso.nivel == 'Básico' %}basico{% elif curso.nivel == 'Intermedio' %}intermedio{% else %}avanzado{% endif %}"
@@ -48,18 +52,23 @@
         <div class="grid">
             {% for rel in relacionados %}
             <a class="card" href="{% url 'detalle_curso' rel.slug %}">
-                <div class="card__top">
-                    <span class="category-badge">{{ rel.categoria.nombre }}</span>
+                <div class="card__cover" style="position: relative; width: 100%; height: 185px; overflow: hidden; background: var(--emerald-100);">
+                    <img src="{% static 'img/cursos/' %}{{ rel.slug }}.jpg" alt="{{ rel.titulo }}" class="card__img" style="width: 100%; height: 100%; object-fit: cover; display: block;" loading="lazy">
                     <span
                         class="level-badge {% if rel.nivel == 'Básico' %}basico{% elif rel.nivel == 'Intermedio' %}intermedio{% else %}avanzado{% endif %}">
                         {{ rel.nivel }}
                     </span>
                 </div>
-                <h3>{{ rel.titulo }}</h3>
-                <p class="card__desc">{{ rel.descripcion }}</p>
-                <div class="card__bottom">
-                    <span class="price">${{ rel.precio }}</span>
-                    <span class="card__link">Ver detalle →</span>
+                <div class="card__body">
+                    <div class="card__top">
+                        <span class="category-badge">{{ rel.categoria.nombre }}</span>
+                    </div>
+                    <h3>{{ rel.titulo }}</h3>
+                    <p class="card__desc">{{ rel.descripcion }}</p>
+                    <div class="card__bottom">
+                        <span class="price">${{ rel.precio }}</span>
+                        <span class="card__link">Ver detalle →</span>
+                    </div>
                 </div>
             </a>
             {% endfor %}

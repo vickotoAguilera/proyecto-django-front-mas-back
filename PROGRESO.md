@@ -28,6 +28,7 @@
 - [x] 3.4 Crear las urls y conectarlas con `{% url %}` (indicador 5)
 - [x] 3.5 Registrar los modelos en el admin (prepara eval 2)
 - [x] 3.6 Probar todo con `python manage.py runserver`
+- [x] 3.7 Integrar imágenes de Pixabay en tarjetas y detalle, adaptadas para móviles y PC
 
 ## Fase 4 — Verificación de la rúbrica (100%)
 

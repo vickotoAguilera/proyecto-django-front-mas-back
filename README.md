@@ -82,6 +82,28 @@ Y `migrate` creó todas las tablas de la base de datos.
 **Paso 11 — Ajustes finales de código y verificación general:**
 - Realicé una revisión completa de los modelos, vistas y rutas para asegurar que todo estuviera correctamente estructurado, validando consultas del ORM y preparando la arquitectura de red para la evaluación.
 
+**Paso 12 — Integración de imágenes temáticas desde Pixabay y diseño responsivo para móviles y PC:**
+- **Situación inicial:** El sitio contaba con una estructura funcional completa, pero las tarjetas estaban sin imágenes (solo texto e insignias).
+- **Intervención con IA (Gemini 3.8):** Como parte del **Indicador 10** (uso de herramientas de IA como apoyo técnico), le di a **Gemini 3.8** la instrucción precisa de buscar imágenes específicas y libres de derechos en Pixabay para cada materia (Python, Django, JavaScript, UX/UI, Machine Learning, SQL, Marketing Digital, APIs REST y Frontend), adaptando el diseño para que las fotos se vean completas y uniformes tanto en computadores como en celulares.
+- **Implementación técnica:**
+  - Descarga y almacenamiento local en `static/img/cursos/` y `front/img/cursos/` para garantizar funcionamiento offline y standalone.
+  - Carátulas con altura fija (`185px`), proporción `16 / 9`, contención estricta (`overflow: hidden`), ajuste `object-fit: cover` y badges flotantes.
+  - Media queries responsivas (`@media (max-width: 560px)`) para evitar cualquier desborde en pantallas móviles.
+
+### Evidencias del proceso (Indicadores 10 y 11)
+
+#### 1. Estado inicial — Catálogo sin imágenes
+Las tarjetas presentaban únicamente la información textual y las etiquetas de categoría y nivel:
+![Catálogo inicial sin imágenes](evidencias/imagen-muestra-sin-imagenes.jpg)
+
+#### 2. Prompt entregado a Gemini 3.8
+Captura de la instrucción proporcionada a la IA para buscar imágenes en Pixabay según el contenido de cada curso y adaptarlas a PC y celulares:
+![Prompt proporcionado a Gemini 3.8](evidencias/imagen-prompt-gemini-3-8.jpg)
+
+#### 3. Resultado final — Tarjetas con fotos temáticas adaptadas a PC y móviles
+Así quedó el catálogo con las imágenes temáticas integradas, diseño responsivo y efectos visuales modernos:
+![Catálogo con fotos desde Pixabay](evidencias/cards-con-fotos-desde-pixabay.jpg)
+
 ---
 
 ## Arquitectura, Protocolos y Despliegue (Indicador 12)
@@ -105,27 +127,36 @@ Y `migrate` creó todas las tablas de la base de datos.
 - [x] Vistas y URLs de catálogo y detalle (indicador 2, 5 y 8).
 - [x] Pruebas en servidor local `runserver` (indicador 4 y 9).
 - [x] Últimos ajustes y verificación general en el código del backend.
+- [x] Integración de imágenes temáticas desde Pixabay y diseño responsivo (PC y móviles).
 - [x] Documentación de protocolos, hosting y despliegue (indicador 12).
 
 ---
 
 ## Cómo correr el proyecto
 
-**1. Activar el entorno virtual:**
+### Servidor Django (Backend + Frontend integrado)
+
+**Opción 1 — Directa con el entorno virtual (Recomendada en Windows):**
+Garantiza usar el Python y las librerías del `venv` (`django-filter`), evitando conflictos si PowerShell llama al Python global del sistema:
+```powershell
+.\venv\Scripts\python.exe manage.py runserver
+```
+
+**Opción 2 — Activando el entorno virtual previamente:**
 ```powershell
 .\venv\Scripts\Activate.ps1
-```
-
-**2. Ejecutar el servidor de Django:**
-```powershell
 python manage.py runserver
 ```
-→ Web principal: http://127.0.0.1:8000/
-→ Panel de administración: http://127.0.0.1:8000/admin/
 
-**3. (Opcional) Front standalone sin Django:**
+- **Web principal:** http://127.0.0.1:8000/
+- **Panel de administración:** http://127.0.0.1:8000/admin/
+
+---
+
+### (Opcional) Frontend Standalone (Sin Django)
+Para visualizar el frontend estático leyendo de forma independiente desde `front/data/cursos.json`:
 ```powershell
 cd front
 python -m http.server 3000
 ```
-→ http://localhost:3000
+- **Web:** http://localhost:3000
