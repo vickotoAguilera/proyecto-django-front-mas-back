@@ -11,7 +11,9 @@ __pycache__/
 db.sqlite3
 
 # Guía de defensa (nunca se sube)
-pasos.md
+pasos*.md
+pasos_unidad_2.md
+docs/
 
 # IDE
 .vscode/

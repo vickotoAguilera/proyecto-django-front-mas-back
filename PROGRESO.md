@@ -45,9 +45,30 @@
 - [x] 4.11 Indicador 11: datos de prueba generados y usados con IA
 - [x] 4.12 Indicador 12: protocolos, hosting y dominios explicados
 
+## Fase 5 — Evaluación 2: Framework Back End (Persistencia, CRUD, Auth y Seguridad)
+
+- [x] 5.1 Configuración de base de datos (`settings.py` / MySQL o SQLite avanzado) y migraciones
+- [x] 5.2 Personalización profesional de Django Admin (`list_display`, `list_filter`, `search_fields`, `readonly_fields`)
+- [x] 5.3 Creación de formularios con `ModelForm` (`CursoForm` con validaciones de servidor y estilos esmeralda)
+- [x] 5.4 Implementación de vista y plantilla para Crear curso (**Create** vía `/cursos/nuevo/`)
+- [x] 5.5 Refactorización y confirmación de vistas de Listado y Detalle (**Read**)
+- [x] 5.6 Implementación de vista y plantilla para Editar curso (**Update** vía `/curso/<slug>/editar/`)
+- [x] 5.7 Implementación de vista y plantilla para Eliminar curso (**Delete** vía confirmación POST en `/curso/<slug>/eliminar/`)
+- [x] 5.8 Sistema de autenticación de usuarios: login, logout y redirecciones
+- [x] 5.9 Protección de vistas CRUD de modificación con el decorador `@login_required`
+- [x] 5.10 Blindaje de seguridad en todos los formularios con token `{% csrf_token %}` y manejo de sesiones
+- [x] 5.11 Auditoría crítica y documentación de prompts de IA utilizados
+- [x] 5.12 Registro continuo en `README.md` bajo la nueva sección "Unidad 2 / Evaluación 2" detallando las diferencias e innovaciones frente a la Unidad 1
+
 ## Prompts de IA documentados (indicador 10)
 
-- Prompt para generar los datos de prueba del JSON (indicador 11): "Genera un JSON con 9 cursos, 5 instructores y 4 categorías para un directorio de cursos, en español, con campos id, titulo, slug, descripcion, nivel, duracion_horas, precio, categoria_id, instructor_id" → resultado en `front/data/cursos.json`.
+- **Prompt Unidad 1 (Datos de prueba - Indicador 11):** "Genera un JSON con 9 cursos, 5 instructores y 4 categorías para un directorio de cursos, en español, con campos id, titulo, slug, descripcion, nivel, duracion_horas, precio, categoria_id, instructor_id" → resultado en `front/data/cursos.json`.
+- **Prompt Unidad 2 (Formularios y Validación en Servidor):** "Crea un ModelForm para Curso con validaciones de servidor para precio >= 0 y duración > 0, autogeneración de slug único mediante slugify y widgets con clases CSS personalizadas para formularios responsivos verde esmeralda".
+- **Prompt Unidad 2 (Seguridad y Control de Acceso):** "Estructura el flujo de autenticación nativo con django.contrib.auth, implementa protección de vistas de escritura/modificación/borrado mediante decorador @login_required, formularios POST blindados con {% csrf_token %} y redirecciones seguras de sesión".
+- **Auditoría Crítica Humana (Unidad 2):**
+  1. *Decisión de arquitectura:* Se mantuvo SQLite para el desarrollo ágil y se documentó la configuración de MySQL con sus 6 parámetros en `settings.py`.
+  2. *Auditoría de seguridad:* Se verificó que ninguna ruta de creación, edición o borrado quede expuesta a usuarios anónimos.
+  3. *Auditoría de integridad:* Se forzó la confirmación mediante método POST para la eliminación, evitando borrados accidentales por GET.
 
 ## Cómo abrir cada parte
 
@@ -58,6 +79,6 @@
 
 - Repositorio: `https://github.com/vickotoAguilera/proyecto-django-front-mas-back.git`
 - Rama principal: `main`
-- **Regla:** en cada push se actualiza `README.md` con los pasos nuevos completados (en primera persona, como diario del estudiante).
-- `pasos.md` (guía de defensa) NO se sube: está en `.gitignore`.
+- **Regla de actualización:** en cada push se actualiza `README.md` (diario del estudiante en primera persona). Durante esta fase se registra bajo **"Unidad 2 / Evaluación 2"**, destacando claramente qué cosas nuevas se construyeron en comparación a la Unidad 1.
+- `pasos.md` y `pasos_*.md` (guías de defensa) NO se suben: están en `.gitignore`.
 - Push con token: `git remote add origin https://vickotoAguilera:<TOKEN>@github.com/vickotoAguilera/proyecto-django-front-mas-back.git` (el token vive solo en el git config local, nunca en archivos del repo).

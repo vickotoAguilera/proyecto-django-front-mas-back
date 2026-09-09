@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{% if curso %}Editar Curso: {{ curso.titulo }}{% else %}Crear Nuevo Curso{% endif %} — Academia Verde
+{% endblock %}
+
+{% block content %}
+<main class="form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <span class="badge" style="margin-bottom: 10px; display: inline-block;">
+        {% if curso %}Modo Edición{% else %}Nuevo Registro{% endif %}
+      </span>
+      <h1>{% if curso %}Editar Curso{% else %}Crear Nuevo Curso{% endif %}</h1>
+      <p>
+        {% if curso %}
+        Actualiza los datos del curso <strong>"{{ curso.titulo }}"</strong> en la base de datos.
+        {% else %}
+        Completa el formulario para agregar un nuevo curso al catálogo académico.
+        {% endif %}
+      </p>
+    </div>
+
+    {% if form.non_field_errors %}
+    <div class="form-errors">
+      {% for error in form.non_field_errors %}
+      <p>⚠️ {{ error }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      {% for field in form %}
+      <div class="form-group">
+        <label class="form-label" for="{{ field.id_for_label }}">
+          {{ field.label }}
+          {% if field.field.required %}<span style="color: #dc2626;">*</span>{% endif %}
+        </label>
+
+        {{ field }}
+
+        {% if field.errors %}
+        {% for error in field.errors %}
+        <span class="field-error">⚠️ {{ error }}</span>
+        {% endfor %}
+        {% endif %}
+
+        {% if field.help_text %}
+        <small style="color: var(--muted); font-size: 0.8rem;">{{ field.help_text }}</small>
+        {% endif %}
+      </div>
+      {% endfor %}
+
+      <div class="form-actions">
+        <a href="{% if curso %}{% url 'detalle_curso' curso.slug %}{% else %}{% url 'inicio' %}{% endif %}"
+          class="btn btn-secondary">
+          Cancelar
+        </a>
+        <button type="submit" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+            <polyline points="17 21 17 13 7 13 7 21" />
+            <polyline points="7 3 7 8 15 8" />
+          </svg>
+          {% if curso %}Guardar Cambios{% else %}Publicar Curso{% endif %}
+        </button>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}

@@ -8,9 +8,9 @@
 - Marco: módulo "Desarrollo de aplicaciones del lado del servidor".
 - Instrumento de evaluación: `Escala_de_Apreciacion_Django_eva1.pdf` (12 indicadores, niveles 1-4).
 - Hay **3 evaluaciones encadenadas**:
-  1. **Eval 1 (actual):** sitio web básico que usa datos desde JSON.
-  2. **Eval 2:** convertir en una app (funcionalidades más completas).
-  3. **Eval 3:** convertir en una API (Django REST Framework).
+  1. **Eval 1 / Unidad 1 (completada):** sitio web básico que usa datos desde JSON.
+  2. **Eval 2 / Unidad 2 (actual):** convertir en una app completa (CRUD, ModelForms, Admin pro, MySQL/persistencia, autenticación y CSRF).
+  3. **Eval 3 / Unidad 3:** convertir en una API (Django REST Framework).
 - Por eso TODO lo que se construya debe ser **escalable**: mismos modelos, misma BD, estructura limpia.
 
 ## División de roles (orden del profesor)
@@ -34,8 +34,8 @@
 7. No crear archivos fuera de la estructura definida en PLAN.md sin avisar antes.
 8. En cada conversación nueva: leer `AGENTS.md`, `PROGRESO.md` y, si es necesario, `PLAN.md`.
 9. El proyecto se sube a GitHub en cada hito: `https://github.com/vickotoAguilera/proyecto-django-front-mas-back.git` (rama `main`, push con token en la URL del remote).
-10. **Cada push actualiza `README.md`** (diario en primera persona) con los pasos completados desde el push anterior.
-11. `pasos.md` es la guía de defensa (qué hace cada archivo y concepto) y **va en `.gitignore`**: nunca se sube.
+10. **Cada push actualiza `README.md`** (diario en primera persona): a partir de ahora se redacta bajo la sección **"Unidad 2 / Evaluación 2"**, detallando qué cosas nuevas se implementaron desde la Unidad 1 para evidenciar claramente la evolución del proyecto.
+11. `pasos.md` y `pasos_*.md` son las guías de defensa (qué hace cada archivo y concepto) y **van en `.gitignore`**: nunca se suben.
 12. Nunca escribir el token en ningún archivo del repo (solo en el git config local).
 
 ## Modelos planificados (eval 1, escalables)

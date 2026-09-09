@@ -1,11 +1,10 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from .models import Categoria, Instructor, Curso
+from .forms import CursoForm
+from django.contrib.auth.decorators import login_required
 
-
-# -------------------------------------------------------------
-# vista 1: catalogo principal con buscador y filtros
-# -------------------------------------------------------------
+# aca defino la vista del catalogo principal con buscador y filtros por categoria
 def index(request):
     # aca capturo lo que el usuario escribio en el buscador (GET con parametro 'q')
     busqueda = request.GET.get('q', '').strip()
@@ -51,9 +50,7 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-# -------------------------------------------------------------
-# vista 2: ficha de detalle de un curso individual
-# -------------------------------------------------------------
+# aca defino la vista de la ficha de detalle de un curso individual por slug
 def detalle_curso(request, slug):
     # aca busco el curso especifico usando su slug (la parte bonita de la URL, ej: python-desde-cero)
     # uso get_object_or_404: si el curso existe me lo entrega, pero si no existe arroja automaticamente un error 404
@@ -78,4 +75,55 @@ def detalle_curso(request, slug):
     return render(request, 'detalle.html', context)
 
 
+# aca creo la vista para agregar un curso nuevo a la base de datos
+# uso login_required para que solo los usuarios logueados puedan crear cursos
+@login_required
+def curso_crear(request):
+    if request.method == 'POST':
+        # si mandaron el formulario por POST, aca capturo los datos ingresados
+        form = CursoForm(request.POST)
+        if form.is_valid():
+            # aca valido los datos en el servidor y guardo el curso nuevo
+            curso = form.save()
+            return redirect('detalle_curso', slug=curso.slug)
+    else:
+        # si es peticion GET, aca entrego el formulario vacio para rellenar
+        form = CursoForm()
+
+    return render(request, 'curso_form.html', {'form': form, 'curso': None})
+
+
+# aca creo la vista para editar un curso existente
+# tambien uso login_required para proteger la modificacion de datos
+@login_required
+def curso_editar(request, slug):
+    # aca busco el curso que quiero editar segun su slug
+    curso = get_object_or_404(Curso, slug=slug)
+    
+    if request.method == 'POST':
+        # aca paso los datos nuevos vinculados a la instancia actual del curso para sobreescribir
+        form = CursoForm(request.POST, instance=curso)
+        if form.is_valid():
+            curso = form.save()
+            return redirect('detalle_curso', slug=curso.slug)
+    else:
+        # aca entrego el formulario con los datos que ya tenia guardados el curso
+        form = CursoForm(instance=curso)
+
+    return render(request, 'curso_form.html', {'form': form, 'curso': curso})
+
+
+# aca creo la vista para eliminar un curso
+# uso login_required y pido confirmacion por POST para no borrar por accidente
+@login_required
+def curso_eliminar(request, slug):
+    curso = get_object_or_404(Curso, slug=slug)
+    
+    if request.method == 'POST':
+        # aca ejecuto el borrado en la base de datos con delete() y redirijo al inicio
+        curso.delete()
+        return redirect('inicio')
+
+    # si la peticion es GET, aca muestro la plantilla de confirmacion para preguntar si esta seguro
+    return render(request, 'curso_confirm_delete.html', {'curso': curso})
 

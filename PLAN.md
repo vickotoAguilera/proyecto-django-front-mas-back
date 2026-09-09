@@ -99,3 +99,43 @@ Repasar los 12 indicadores con el usuario y marcar evidencias en `PROGRESO.md`.
 | 10 | Usa IA como apoyo | Este agente; prompts documentados en PROGRESO.md |
 | 11 | Genera y usa datos de prueba con IA | `cursos.json` + comando `cargar_datos` |
 | 12 | Protocolos, hosting y dominios | HTTP/localhost explicados; alternativas de despliegue |
+
+---
+
+## Fase 5 — Evaluación 2: Framework Back End (CRUD, Admin Pro, Auth y Seguridad)
+
+> Basado en los contenidos de la Unidad 2 (`docs/unidad 2/`): persistencia en BD, operaciones CRUD completas, personalización avanzada de Django Admin, `ModelForm`, autenticación y protección de rutas.
+
+### 5.1 Conexión y Persistencia (MySQL / ORM)
+- Configuración de conexión en `settings.py` con `DATABASES` (`ENGINE`, `NAME`, `USER`, `PASSWORD`, `HOST`, `PORT`).
+- Conector de bajo nivel `mysqlclient` (o soporte dual para SQLite/MySQL).
+- Ciclo de migraciones ordenado: `makemigrations` y `migrate`.
+
+### 5.2 Django Admin Profesional
+- Personalización de modelos en `cursos/admin.py` con decoradores `@admin.register(...)`.
+- Incorporación de `list_display`, `list_filter`, `search_fields` y `readonly_fields`.
+
+### 5.3 Formularios con ModelForm
+- Creación de `cursos/forms.py` con `CursoForm` enlazado al modelo `Curso`.
+- Validación en el servidor y clases CSS integradas para mantener el estilo verde esmeralda.
+
+### 5.4 Operaciones CRUD completas
+- **Create:** Formulario web para crear nuevos cursos (`/cursos/nuevo/`).
+- **Read:** Listado con filtros y ficha de detalle (`/` y `/curso/<slug>/`).
+- **Update:** Edición de cursos existentes con pre-carga de datos (`/curso/<slug>/editar/`).
+- **Delete:** Eliminación de registros con pantalla de confirmación (`/curso/<slug>/eliminar/`).
+
+### 5.5 Autenticación y Seguridad
+- Rutas de inicio y cierre de sesión (`django.contrib.auth.urls`).
+- Protección de operaciones de escritura con el decorador `@login_required`.
+- Blindaje contra falsificación de peticiones con el token `{% csrf_token %}` en todos los formularios POST.
+
+### 5.6 IA como copiloto y auditoría
+- Generación asistida de esqueletos y lógica CRUD.
+- Auditoría humana de seguridad: confirmaciones de borrado, validaciones en servidor y control de acceso.
+
+### 5.7 Registro y Actualización Continua de README.md (Unidad 2 vs Unidad 1)
+- Cada push al repositorio debe actualizar `README.md` bajo una sección principal claramente delimitada: **`## Unidad 2 / Evaluación 2 — Framework Back End (Diario de trabajo)`**.
+- En cada entrada en primera persona se debe contrastar explícitamente:
+  - Qué teníamos en la **Unidad 1** (sitio web básico que leía JSON y cargaba a SQLite).
+  - Qué cosas nuevas se implementaron en la **Unidad 2** (conexión/persistencia avanzada, CRUD completo vía web, `ModelForm`, panel Admin profesional, autenticación de usuarios y protección CSRF).

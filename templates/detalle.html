@@ -31,6 +31,19 @@
                 <li><small>Duración</small><strong>{{ curso.duracion_horas }} horas</strong></li>
                 <li><small>Precio</small><strong>${{ curso.precio }}</strong></li>
             </ul>
+
+            {% if user.is_authenticated %}
+            <!-- Acciones CRUD de Administración (Solo para usuarios autenticados) -->
+            <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--emerald-100); display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                <span style="font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Gestión del curso:</span>
+                <a href="{% url 'curso_editar' curso.slug %}" class="btn btn-secondary btn-sm" style="border: 1px solid var(--emerald-200);">
+                    ✏️ Editar curso
+                </a>
+                <a href="{% url 'curso_eliminar' curso.slug %}" class="btn btn-danger btn-sm">
+                    🗑️ Eliminar
+                </a>
+            </div>
+            {% endif %}
         </section>
 
         <aside class="detail__side">

@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
   <link rel="stylesheet" href="{% static 'css/style.css' %}?v=2">
 </head>
 <body data-page="{% block page_name %}inicio{% endblock %}">
@@ -24,6 +25,32 @@
       <div class="navbar__links">
         <a href="{% url 'inicio' %}">Inicio</a>
         <a href="{% url 'inicio' %}#cursos">Cursos</a>
+
+        {% if user.is_authenticated %}
+          <!-- Solo visible para usuarios autenticados -->
+          <a href="{% url 'curso_crear' %}" class="btn btn-primary btn-sm" style="display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; font-size: 0.85rem; border-radius: 8px; color: #ffffff !important;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"/>
+              <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Nuevo Curso
+          </a>
+          <span style="font-size: 0.88rem; font-weight: 600; color: var(--emerald-800); background: var(--emerald-100); padding: 4px 10px; border-radius: 20px;">
+            👤 {{ user.username }}
+          </span>
+          <form method="post" action="{% url 'logout' %}" style="display: inline; margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary btn-sm" style="padding: 5px 12px; font-size: 0.82rem; cursor: pointer;">
+              Cerrar sesión
+            </button>
+          </form>
+        {% else %}
+          <!-- Visitante anónimo: botón para acceder -->
+          <a href="{% url 'login' %}" class="btn btn-primary btn-sm" style="color: #ffffff !important; padding: 6px 14px; font-size: 0.85rem; border-radius: 8px;">
+            Iniciar sesión
+          </a>
+        {% endif %}
+
         <a href="/admin/" target="_blank" class="badge">Panel Admin</a>
       </div>
     </div>
@@ -33,7 +60,7 @@
   {% endblock %}
 
   <footer class="footer">
-    <p><strong>Academia Verde</strong> — Directorio de Cursos · Proyecto académico Django (Evaluación 1)</p>
+    <p><strong>Academia Verde</strong> — Directorio de Cursos · Proyecto académico Django (Evaluación 1, Evaluación 2)</p>
   </footer>
 
 </body>

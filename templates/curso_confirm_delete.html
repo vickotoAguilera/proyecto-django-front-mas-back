@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Eliminación: {{ curso.titulo }} — Academia Verde{% endblock %}
+
+{% block content %}
+<main class="form-container">
+  <div class="confirm-box">
+    <div class="confirm-box__icon">
+      ⚠️
+    </div>
+
+    <span class="badge badge--danger" style="margin-bottom: 12px; display: inline-block; background: #fee2e2; color: #dc2626; border-color: #fca5a5;">
+      Zona de Peligro
+    </span>
+
+    <h1 style="font-size: 1.6rem; font-weight: 800; color: #991b1b; margin-bottom: 10px;">
+      ¿Estás seguro de eliminar este curso?
+    </h1>
+
+    <p style="color: var(--muted); margin-bottom: 24px; font-size: 0.95rem;">
+      Estás a punto de eliminar permanentemente el curso:
+    </p>
+
+    <div style="background: #f9fafb; border: 1px solid var(--emerald-100); border-radius: 12px; padding: 18px; margin-bottom: 28px; text-align: left;">
+      <h3 style="color: var(--emerald-950); font-size: 1.15rem; margin-bottom: 8px;">{{ curso.titulo }}</h3>
+      <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 4px;"><strong>Categoría:</strong> {{ curso.categoria.nombre }}</p>
+      <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 4px;"><strong>Instructor:</strong> {{ curso.instructor.nombre }}</p>
+      <p style="color: var(--muted); font-size: 0.9rem;"><strong>Precio:</strong> ${{ curso.precio }} CLP</p>
+    </div>
+
+    <p style="color: #dc2626; font-size: 0.88rem; font-weight: 600; margin-bottom: 24px;">
+      ⚠️ Esta operación eliminará el registro de la base de datos de manera irreversible.
+    </p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <a href="{% url 'detalle_curso' curso.slug %}" class="btn btn-secondary">
+          Cancelar y Volver
+        </a>
+        <button type="submit" class="btn btn-danger">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            <line x1="10" y1="11" x2="10" y2="17"/>
+            <line x1="14" y1="11" x2="14" y2="17"/>
+          </svg>
+          Sí, eliminar definitivamente
+        </button>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}
