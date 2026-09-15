@@ -313,3 +313,10 @@ Si en la evaluación o en clase el profesor solicita conectar la aplicación dir
 - **Gestión de colecciones en sesión HTTP (`request.session` y `templates/index.html`):**
   - En la vista `detalle_curso`, implementé la captura del ID del curso en la lista `request.session['cursos_vistos']` (conservando un máximo de 4 cursos recientes y actualizando su orden con `modified = True`).
   - En la vista `index`, recuperé dicha colección desde la sesión y la rendericé en un bloque visual destacado `"🕒 Cursos visitados recientemente (Colección en Sesión)"` antes del catálogo, permitiendo que cualquier usuario (incluso anónimo) disfrute de memoria de navegación persistida en su sesión HTTP.
+
+#### Paso 11 — Migración y validación en vivo sobre MySQL con Docker:
+- **Despliegue ágil con Docker (`docker-compose.yml`):** Para mantener un entorno limpio y profesional sin instalar software redundante como WampServer o XAMPP, creé la configuración con la imagen oficial `mysql:8.0`, puerto `3306`, base de datos `cursos_db` y persistencia en volúmenes Docker.
+- **Conexión activa en `settings.py`:** Activé el bloque `DATABASES` con el motor `django.db.backends.mysql` y el conector de alto rendimiento `mysqlclient`.
+- **Migraciones exitosas (`migrate`):** Ejecuté `python manage.py migrate` aplicando de forma impecable las 18 operaciones DDL en MySQL para crear las tablas relacionales con sus claves foráneas.
+- **Carga de datos relacionales (`cargar_datos`):** Ejecuté `python manage.py cargar_datos`, poblando la base de datos MySQL desde el archivo JSON con los 9 cursos, 4 categorías y 5 instructores generados por IA.
+- **Superusuario administrativo:** Creé el superusuario `admin` en MySQL para garantizar acceso inmediato al panel de control `/admin/`.
