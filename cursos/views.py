@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
+from django.contrib import messages
 from .models import Categoria, Instructor, Curso
 from .forms import CursoForm
 from django.contrib.auth.decorators import login_required
 
-# aca defino la vista del catalogo principal con buscador y filtros por categoria
+# aca defino la vista del catalogo principal con buscador, filtros por categoria y coleccion de sesion
 def index(request):
     # aca capturo lo que el usuario escribio en el buscador (GET con parametro 'q')
     busqueda = request.GET.get('q', '').strip()
@@ -28,6 +29,14 @@ def index(request):
     if categoria_id and categoria_id.isdigit():
         cursos = cursos.filter(categoria_id=int(categoria_id))
 
+    # aca recupero la coleccion de cursos vistos guardada en la sesion HTTP del navegador (requisito de colecciones en sesion)
+    vistos_ids = request.session.get('cursos_vistos', [])
+    cursos_recientes_sesion = []
+    if vistos_ids:
+        # aca preservo el orden exacto de navegacion en que el usuario visito los cursos
+        cursos_dict = {c.id: c for c in Curso.objects.filter(id__in=vistos_ids).select_related('categoria')}
+        cursos_recientes_sesion = [cursos_dict[cid] for cid in vistos_ids if cid in cursos_dict]
+
     # aca calculo las estadisticas generales para mostrarlas en los contadores del Hero
     total_cursos = Curso.objects.count()
     total_categorias = Categoria.objects.count()
@@ -44,13 +53,14 @@ def index(request):
         'total_cursos': total_cursos,
         'total_categorias': total_categorias,
         'total_instructores': total_instructores,
+        'cursos_recientes_sesion': cursos_recientes_sesion,
     }
 
     # aca renderizo la plantilla 'index.html' pasandole el request y el contexto con mis datos
     return render(request, 'index.html', context)
 
 
-# aca defino la vista de la ficha de detalle de un curso individual por slug
+# aca defino la vista de la ficha de detalle de un curso individual por slug y registro de sesion
 def detalle_curso(request, slug):
     # aca busco el curso especifico usando su slug (la parte bonita de la URL, ej: python-desde-cero)
     # uso get_object_or_404: si el curso existe me lo entrega, pero si no existe arroja automaticamente un error 404
@@ -58,6 +68,14 @@ def detalle_curso(request, slug):
         Curso.objects.select_related('categoria', 'instructor'),
         slug=slug
     )
+
+    # aca actualizo la coleccion de cursos vistos en request.session (memoria de navegacion sin requerir login)
+    vistos = request.session.get('cursos_vistos', [])
+    if curso.id in vistos:
+        vistos.remove(curso.id)
+    vistos.insert(0, curso.id)
+    request.session['cursos_vistos'] = vistos[:4]  # aca guardo como maximo los 4 cursos mas recientes
+    request.session.modified = True
 
     # aca busco hasta 3 cursos relacionados que pertenezcan a la misma categoria,
     # excluyendo el curso actual (.exclude(id=curso.id)) para no recomendar el mismo que ya esta viendo
@@ -75,17 +93,23 @@ def detalle_curso(request, slug):
     return render(request, 'detalle.html', context)
 
 
-# aca creo la vista para agregar un curso nuevo a la base de datos
-# uso login_required para que solo los usuarios logueados puedan crear cursos
+# aca creo la vista para agregar un curso nuevo con captura de excepciones y mensajes flash
 @login_required
 def curso_crear(request):
     if request.method == 'POST':
         # si mandaron el formulario por POST, aca capturo los datos ingresados
         form = CursoForm(request.POST)
         if form.is_valid():
-            # aca valido los datos en el servidor y guardo el curso nuevo
-            curso = form.save()
-            return redirect('detalle_curso', slug=curso.slug)
+            try:
+                # aca valido los datos en el servidor y guardo el curso nuevo
+                curso = form.save()
+                messages.success(request, f'¡El curso "{curso.titulo}" fue publicado exitosamente!')
+                return redirect('detalle_curso', slug=curso.slug)
+            except Exception as e:
+                # aca atrapo cualquier error de persistencia para no botar la app
+                messages.error(request, f'Ocurrió un error al registrar el curso en la base de datos: {e}')
+        else:
+            messages.error(request, 'Por favor revisa los campos señalados con error antes de continuar.')
     else:
         # si es peticion GET, aca entrego el formulario vacio para rellenar
         form = CursoForm()
@@ -93,8 +117,7 @@ def curso_crear(request):
     return render(request, 'curso_form.html', {'form': form, 'curso': None})
 
 
-# aca creo la vista para editar un curso existente
-# tambien uso login_required para proteger la modificacion de datos
+# aca creo la vista para editar un curso existente con manejo de excepciones y feedback visual
 @login_required
 def curso_editar(request, slug):
     # aca busco el curso que quiero editar segun su slug
@@ -104,8 +127,14 @@ def curso_editar(request, slug):
         # aca paso los datos nuevos vinculados a la instancia actual del curso para sobreescribir
         form = CursoForm(request.POST, instance=curso)
         if form.is_valid():
-            curso = form.save()
-            return redirect('detalle_curso', slug=curso.slug)
+            try:
+                curso = form.save()
+                messages.success(request, f'¡El curso "{curso.titulo}" se actualizó correctamente!')
+                return redirect('detalle_curso', slug=curso.slug)
+            except Exception as e:
+                messages.error(request, f'Ocurrió un error al actualizar los datos en la base de datos: {e}')
+        else:
+            messages.error(request, 'Corrige los errores del formulario antes de guardar los cambios.')
     else:
         # aca entrego el formulario con los datos que ya tenia guardados el curso
         form = CursoForm(instance=curso)
@@ -113,17 +142,23 @@ def curso_editar(request, slug):
     return render(request, 'curso_form.html', {'form': form, 'curso': curso})
 
 
-# aca creo la vista para eliminar un curso
-# uso login_required y pido confirmacion por POST para no borrar por accidente
+# aca creo la vista para eliminar un curso con confirmacion obligatoria por POST
 @login_required
 def curso_eliminar(request, slug):
     curso = get_object_or_404(Curso, slug=slug)
     
     if request.method == 'POST':
-        # aca ejecuto el borrado en la base de datos con delete() y redirijo al inicio
-        curso.delete()
-        return redirect('inicio')
+        titulo_curso = curso.titulo
+        try:
+            # aca ejecuto el borrado definitivo en la base de datos con delete() y confirmo al usuario
+            curso.delete()
+            messages.success(request, f'El curso "{titulo_curso}" ha sido eliminado exitosamente del catálogo.')
+            return redirect('inicio')
+        except Exception as e:
+            messages.error(request, f'No se pudo eliminar el curso debido a un error de base de datos: {e}')
+            return redirect('detalle_curso', slug=curso.slug)
 
     # si la peticion es GET, aca muestro la plantilla de confirmacion para preguntar si esta seguro
     return render(request, 'curso_confirm_delete.html', {'curso': curso})
+
 

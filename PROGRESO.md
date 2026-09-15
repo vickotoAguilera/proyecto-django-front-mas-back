@@ -59,6 +59,12 @@
 - [x] 5.10 Blindaje de seguridad en todos los formularios con token `{% csrf_token %}` y manejo de sesiones
 - [x] 5.11 Auditoría crítica y documentación de prompts de IA utilizados
 - [x] 5.12 Registro continuo en `README.md` bajo la nueva sección "Unidad 2 / Evaluación 2" detallando las diferencias e innovaciones frente a la Unidad 1
+- [x] 5.13 Extender Django Admin con `TabularInline` (cursos en Categoria e Instructor) y formateo de precios (Criterio 2.1.2 — Nivel 4 Destacado)
+- [x] 5.14 Robustez del CRUD con `django.contrib.messages`, alertas visuales y manejo de excepciones (Criterio 2.1.3 — Nivel 4 Destacado)
+- [x] 5.15 Configurar políticas avanzadas de expiración de sesión y seguridad de cookies en `settings.py` (Criterio 5 — Nivel 4 Destacado)
+- [x] 5.16 Implementar manejo de colecciones en sesión HTTP (`request.session`) para cursos visitados o favoritos (Actividad Práctica Obligatoria)
+
+
 
 ## Prompts de IA documentados (indicador 10)
 

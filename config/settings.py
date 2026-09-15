@@ -148,3 +148,14 @@ MAILERS = {
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'inicio'
 LOGOUT_REDIRECT_URL = 'inicio'
+
+# aca defino el tipo de clave primaria automatica por defecto para los modelos
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# aca configuro las politicas avanzadas de sesion para cumplir con la evaluacion 2 (Nivel 4 Destacado)
+
+SESSION_COOKIE_AGE = 1800                  # aca hago que la sesion expire a los 30 minutos (1800 segundos) de inactividad
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True     # aca hago que la sesion se cierre automaticamente si el usuario cierra el navegador
+SESSION_COOKIE_HTTPONLY = True            # aca protejo la cookie de sesion para que ningun script malicioso en JS pueda robarla (contra XSS)
+SESSION_SAVE_EVERY_REQUEST = True         # aca hago que cada clic o interaccion renueve el temporizador de los 30 minutos
+

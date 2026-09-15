@@ -182,23 +182,22 @@ python -m http.server 3000
 
 ### Para recordar: Si en algún momento necesito migrar los datos a MySQL tengo que hacer esto
 
-Si en la evaluación o en clase el profesor solicita conectar la aplicación directamente a **MySQL** (por ejemplo mediante WAMP, XAMPP o Laragon), estos son los pasos exactos que debemos ejecutar en ese instante:
+Si en la evaluación o en clase el profesor solicita conectar la aplicación directamente a **MySQL** en **WampServer**, estos son los pasos exactos que debemos ejecutar en ese instante:
 
-#### 1. Iniciar el servidor MySQL
-- Abrir WAMP o XAMPP y presionar **Start** en el servicio **MySQL** para que quede activo y escuchando en el puerto local estándar `3306`.
+#### 1. Iniciar WampServer
+- Abrir **WampServer** y verificar que el icono en la barra de tareas cambie a color **VERDE** (lo que confirma que los servicios Apache y MySQL están corriendo activamente en el puerto local estándar `3306`).
 
-#### 2. Crear la base de datos en MySQL
-- Ingresar a phpMyAdmin (`http://localhost/phpmyadmin`) o abrir la consola de MySQL y ejecutar la sentencia SQL:
+#### 2. Crear la base de datos en MySQL con phpMyAdmin
+- Ingresar a phpMyAdmin (`http://localhost/phpmyadmin`).
+- En la pantalla de inicio de sesión, seleccionar como servidor **MySQL** (o MariaDB según corresponda), usuario `root` y dejar la contraseña vacía.
+- Abrir la pestaña SQL y ejecutar la sentencia:
   ```sql
   CREATE DATABASE cursos_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
   ```
 
-#### 3. Instalar el conector en el entorno virtual
-- Con el terminal posicionado en la carpeta del proyecto, instalar el driver de conexión:
-  ```powershell
-  .\venv\Scripts\pip install mysqlclient
-  ```
-  *(Nota técnica: Si en Windows `mysqlclient` diera error de compilación C++, la alternativa directa y 100% pura de Python es instalar `PyMySQL` ejecutando `.\venv\Scripts\pip install pymysql` y agregando dos líneas al inicio de `config/__init__.py`: `import pymysql; pymysql.install_as_MySQLdb()`).*
+#### 3. Conector de base de datos
+- El conector oficial de alto rendimiento `mysqlclient` (versión 2.2.8) ya se encuentra instalado en el entorno virtual (`venv`).
+  *(Nota técnica: Si en algún equipo alternativo Windows diera error de compilación C++, la alternativa directa es `pip install pymysql` e inicializarlo con dos líneas en `config/__init__.py`: `import pymysql; pymysql.install_as_MySQLdb()`).*
 
 #### 4. Cambiar el bloque `DATABASES` en `config/settings.py`
 - En el archivo `config/settings.py`, comentar el bloque de SQLite y descomentar/activar el bloque de MySQL con sus 6 parámetros:
@@ -207,10 +206,10 @@ Si en la evaluación o en clase el profesor solicita conectar la aplicación dir
       'default': {
           'ENGINE': 'django.db.backends.mysql',
           'NAME': 'cursos_db',
-          'USER': 'root',        # Usuario predeterminado en WAMP/XAMPP
-          'PASSWORD': '',            # Contraseña (vacía por defecto en WAMP/XAMPP)
+          'USER': 'root',            # Usuario predeterminado en WampServer
+          'PASSWORD': '',            # Contraseña (vacía por defecto en WampServer)
           'HOST': '127.0.0.1',       # Loopback / Localhost
-          'PORT': '3306',            # Puerto de red estándar de MySQL
+          'PORT': '3306',            # Puerto de MySQL en WampServer
       }
   }
   ```
@@ -281,3 +280,36 @@ Si en la evaluación o en clase el profesor solicita conectar la aplicación dir
   1. *Decisión de persistencia:* Se mantuvo SQLite como base de datos activa para desarrollo rápido y portable, dejando documentada y parametrizada la configuración de MySQL en `settings.py` con sus 6 parámetros obligatorios para cuando se requiera migrar.
   2. *Auditoría de seguridad y control de acceso:* Se verificó que ninguna vista de modificación quedara accesible a usuarios anónimos y que la interfaz oculte los botones administrativos a visitantes públicos.
   3. *Auditoría de integridad relacional:* Se estableció que las eliminaciones requieran confirmación explícita mediante método POST con token CSRF, impidiendo eliminaciones accidentales o maliciosas por enlaces GET.
+  4. *Auditoría de compatibilidad de base de datos:* Detecté que Django 6 requería MariaDB >= 10.11 o MySQL >= 8.4, por lo que tomé la decisión técnica de ajustar a Django 5.0.14 e integrar `mysqlclient 2.2.8` para asegurar interoperabilidad 100% garantizada con servidores locales como WampServer (MySQL 8.0) y XAMPP (MariaDB 10.4) sin errores de versiones en la evaluación.
+
+#### Paso 8 — Adecuación de compatibilidad con MariaDB / MySQL (Ajuste a Django 5.0 y driver `mysqlclient`):
+- **Diagnóstico técnico de versiones:** Identifiqué y comprobé que las versiones de desarrollo de Django 6 exigen como requisito mínimo **MariaDB 10.11+** y **MySQL 8.4+**. Esto genera un conflicto directo (`NotSupportedError`) con servidores locales como **WampServer** (que habitualmente corre **MySQL 8.0.x**) o **XAMPP** (con **MariaDB 10.4.x**).
+- **Migración a Django 5.0:** Ajusté el entorno virtual a **Django 5.0 (5.0.14)** junto a **django-filter 25.1**, garantizando soporte nativo para **MariaDB 10.4+** y **MySQL 8.0+**, resolviendo cualquier bloqueo de compatibilidad sin afectar ninguna funcionalidad de los modelos, vistas ni formularios.
+- **Instalación de `mysqlclient`:** Instalé el driver oficial y de alto rendimiento `mysqlclient==2.2.8` en el entorno virtual, dejando el stack completamente preparado para ejecutar `migrate` sobre cualquier motor MySQL o MariaDB cuando se requiera la conexión directa.
+- **Actualización de dependencias:** Actualicé el archivo `requirements.txt` reflejando las versiones definitivas y asegurando la reproducibilidad del entorno.
+
+#### Paso 9 — Alineación estricta con la Escala de Apreciación (Hacia el Nivel 4 Destacado):
+- **Auditoría de la rúbrica oficial:** Descargué y analicé la `Escala_de_Apreciacion_Django_eva2.pdf` para asegurar que cada uno de los 6 indicadores alcance la nota máxima (Nivel 4 Destacado - 4 puntos).
+- **Decisiones técnicas planificadas para los próximos pasos:**
+  1. *Extensión del Django Admin:* Incorporar `admin.TabularInline` para gestionar cursos directamente dentro de categorías e instructores, y formatear precios a moneda chilena (`$29.990 CLP`) en `list_display`.
+  2. *Robustez del CRUD y feedback:* Envolver operaciones críticas en `try/except` e integrar `django.contrib.messages` para emitir notificaciones visuales tras cada creación, modificación o borrado.
+  3. *Políticas avanzadas de sesión:* Declarar en `settings.py` el tiempo de expiración (`SESSION_COOKIE_AGE = 1800`), cierre al cerrar navegador (`SESSION_EXPIRE_AT_BROWSER_CLOSE = True`) y protección HttpOnly.
+  4. *Gestión de colecciones en sesión (`request.session`):* Implementar el registro y visualización de una colección de cursos visitados en el navegador para cumplir con el requerimiento explícito de la actividad práctica.
+
+#### Paso 10 — Implementación de extensiones y robustez de Nivel 4 Destacado:
+- **Extensión del Django Admin (`cursos/admin.py`):**
+  - Implementé `CursoCategoriaInline` y `CursoInstructorInline` (`admin.TabularInline`) para visualizar y gestionar directamente la colección de cursos asignados dentro de la pantalla de edición de cada categoría y de cada profesor, con enlace rápido `show_change_link = True`.
+  - Agregué el decorador `@admin.display(description='Precio (CLP)')` para renderizar los precios en la grilla del catálogo con formato oficial (`$29.990 CLP`).
+- **Robustez del CRUD y notificaciones inmediatas (`cursos/views.py` y `templates/base.html`):**
+  - Importé `django.contrib.messages` y protegí con bloques `try/except` las vistas de mutación (`curso_crear`, `curso_editar`, `curso_eliminar`). Ante cualquier fallo en persistencia, se captura la excepción y se informa amigablemente al usuario con `messages.error()`.
+  - Cuando una operación se completa con éxito, se emite un `messages.success()`.
+  - Diseñé en `templates/base.html` un banner de alertas verde esmeralda con icono, mensaje explicativo y botón de cierre (`&times;`), garantizando feedback visual tras cada redirección.
+- **Políticas avanzadas de sesión y hardening de cookies (`config/settings.py`):**
+  - Configuré `SESSION_COOKIE_AGE = 1800` (expiración a los 30 minutos de inactividad).
+  - Configuré `SESSION_EXPIRE_AT_BROWSER_CLOSE = True` (la sesión se destruye automáticamente al cerrar la pestaña o el navegador).
+  - Configuré `SESSION_COOKIE_HTTPONLY = True` (mitiga el riesgo de robo de cookie por secuencias de comandos XSS).
+  - Configuré `SESSION_SAVE_EVERY_REQUEST = True` (renueva la ventana de 30 minutos en cada interacción).
+  - Agregué `DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'` para tener 0 advertencias en los checks del sistema.
+- **Gestión de colecciones en sesión HTTP (`request.session` y `templates/index.html`):**
+  - En la vista `detalle_curso`, implementé la captura del ID del curso en la lista `request.session['cursos_vistos']` (conservando un máximo de 4 cursos recientes y actualizando su orden con `modified = True`).
+  - En la vista `index`, recuperé dicha colección desde la sesión y la rendericé en un bloque visual destacado `"🕒 Cursos visitados recientemente (Colección en Sesión)"` antes del catálogo, permitiendo que cualquier usuario (incluso anónimo) disfrute de memoria de navegación persistida en su sesión HTTP.

@@ -139,3 +139,23 @@ Repasar los 12 indicadores con el usuario y marcar evidencias en `PROGRESO.md`.
 - En cada entrada en primera persona se debe contrastar explícitamente:
   - Qué teníamos en la **Unidad 1** (sitio web básico que leía JSON y cargaba a SQLite).
   - Qué cosas nuevas se implementaron en la **Unidad 2** (conexión/persistencia avanzada, CRUD completo vía web, `ModelForm`, panel Admin profesional, autenticación de usuarios y protección CSRF).
+
+### 5.8 Extensión de Capacidades de Django Admin (Criterio 2.1.2 — Nivel 4 Destacado)
+- Implementar `admin.TabularInline` para gestionar colecciones de cursos directamente dentro de las fichas de `Categoria` e `Instructor`.
+- Enriquecer `CursoAdmin` con formateo de moneda (`$29.990 CLP`) en `list_display` mediante `@admin.display`.
+
+### 5.9 Robustez del CRUD con Mensajes Flash y Manejo de Excepciones (Criterio 2.1.3 — Nivel 4 Destacado)
+- Integrar `django.contrib.messages` en vistas de creación, modificación y borrado (`messages.success`, `messages.error`).
+- Envolver operaciones críticas de base de datos en bloques de captura de excepciones.
+- Renderizar alertas visuales de estado verde esmeralda y dismissibles en `templates/base.html`.
+
+### 5.10 Políticas Avanzadas de Expiración de Sesión (Criterio 5 — Nivel 4 Destacado)
+- Configurar en `settings.py`:
+  - `SESSION_COOKIE_AGE = 1800` (expiración a los 30 minutos).
+  - `SESSION_EXPIRE_AT_BROWSER_CLOSE = True` (cierre de sesión al cerrar navegador).
+  - `SESSION_COOKIE_HTTPONLY = True` (mitigación de ataques XSS sobre la cookie de sesión).
+  - `SESSION_SAVE_EVERY_REQUEST = True` (renovación de expiración ante actividad del usuario).
+
+### 5.11 Gestión de Colecciones en Sesión HTTP (Actividad Práctica Obligatoria)
+- Implementar en `request.session` el seguimiento de una colección dinámica: lista de **"Cursos vistos recientemente"** o **"Colección de cursos guardados/favoritos"**.
+- Renderizar la colección persistida en sesión dentro de la interfaz web sin requerir autenticación previa.
