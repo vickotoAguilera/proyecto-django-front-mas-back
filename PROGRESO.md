@@ -1,6 +1,6 @@
 # PROGRESO — Directorio de Cursos (Eval 1)
 
-> Cada vez que se complete un paso, marcarlo aquí. Última actualización: 24-08-2026
+> Cada vez que se complete un paso, marcarlo aquí. Última actualización: 20-09-2026
 
 ## Fase 1 — Frontend (la hace el agente)
 
@@ -63,6 +63,7 @@
 - [x] 5.14 Robustez del CRUD con `django.contrib.messages`, alertas visuales y manejo de excepciones (Criterio 2.1.3 — Nivel 4 Destacado)
 - [x] 5.15 Configurar políticas avanzadas de expiración de sesión y seguridad de cookies en `settings.py` (Criterio 5 — Nivel 4 Destacado)
 - [x] 5.16 Implementar manejo de colecciones en sesión HTTP (`request.session`) para cursos visitados o favoritos (Actividad Práctica Obligatoria)
+- [x] 5.17 Refactorización limpia de componentes visuales (CSS de alertas desacoplado de templates HTML) y resolución de advertencias de linter en runtime
 
 
 

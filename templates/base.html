@@ -58,14 +58,14 @@
 
   {% if messages %}
     <!-- aca muestro los mensajes flash de confirmacion o error para dar feedback al usuario -->
-    <div class="messages-container" style="max-width: 1200px; margin: 20px auto 0; padding: 0 20px;">
+    <div class="messages-container">
       {% for message in messages %}
-        <div class="alert alert--{{ message.tags }}" style="padding: 14px 18px; border-radius: 10px; margin-bottom: 12px; font-weight: 500; font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between; {% if message.tags == 'success' %}background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; box-shadow: 0 2px 6px rgba(5,150,105,0.08);{% elif message.tags == 'error' %}background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; box-shadow: 0 2px 6px rgba(220,38,38,0.08);{% else %}background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;{% endif %}">
-          <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="alert alert--{{ message.tags }}">
+          <div class="alert__content">
             <span>{% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}⚠️{% else %}ℹ️{% endif %}</span>
             <span>{{ message }}</span>
           </div>
-          <button type="button" onclick="this.parentElement.remove()" style="background: none; border: none; font-size: 1.25rem; line-height: 1; cursor: pointer; color: inherit; opacity: 0.6; padding: 0 4px;" title="Cerrar aviso">&times;</button>
+          <button type="button" onclick="this.parentElement.remove()" class="alert__close" title="Cerrar aviso">&times;</button>
         </div>
       {% endfor %}
     </div>
