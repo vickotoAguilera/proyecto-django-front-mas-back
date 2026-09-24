@@ -17,11 +17,7 @@ urlpatterns = [
     # aca defino la ruta para borrar un curso con confirmacion
     path('curso/<slug:slug>/eliminar/', views.curso_eliminar, name='curso_eliminar'),
 
-        # aca defino la ruta para la consola tecnica de la evaluacion 3 en el panel administrativo
-    path('panel-admin/evaluacion-3/', views.consola_evaluacion_3, name='consola_evaluacion_3'),
-
-
-    # aca defino la ruta para el catalogo interactivo frontend consumido por API REST con JavaScript
+        # aca defino la ruta para el catalogo interactivo frontend consumido por API REST con JavaScript
     path('catalogo-api/', views.catalogo_api, name='catalogo_api'),
 ]
 
