@@ -17,11 +17,11 @@ urlpatterns = [
     # aca conecto el sistema de login y logout nativo de django
     path('accounts/', include('django.contrib.auth.urls')),
 
-    # Endpoints de Autenticación JWT Stateless (Unidad 3)
+    # aca conecto los endpoints de autenticacion stateless con JSON Web Tokens (Simple JWT)
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
-    # Endpoints de la API RESTful versionada v1
+    # aca conecto las rutas de la API RESTful versionada (/api/v1/cursos/, /api/v1/categorias/, etc.)
     path('api/v1/', include('cursos.api_urls')),
 
     # aca incluyo las rutas de mi aplicacion cursos (interfaz web tradicional)

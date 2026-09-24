@@ -87,7 +87,7 @@ const imagenesCategorias = {
   default: "https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg?auto=compress&cs=tinysrgb&w=600"
 };
 
-// 1. Cargar categorías
+// 1. aca cargo dinamicamente las categorias desde el endpoint /api/v1/categorias/
 async function cargarCategoriasAPI() {
   try {
     const res = await fetch('/api/v1/categorias/');
@@ -117,7 +117,7 @@ async function cargarCategoriasAPI() {
   }
 }
 
-// 2. Cargar cursos con filtros, búsqueda y ordenamiento
+// 2. aca cargo los cursos consumiendo /api/v1/cursos/ con busqueda, filtros y ordenamiento en tiempo real
 async function cargarCursosAPI() {
   const statusDot = document.getElementById('api-status-dot');
   const countEl = document.getElementById('api-count');
@@ -156,7 +156,7 @@ async function cargarCursosAPI() {
   }
 }
 
-// 3. Renderizar tarjetas de cursos en el DOM
+// 3. aca renderizo las tarjetas de cursos en el DOM sin recargar la pagina
 function renderizarCursos(cursos) {
   const grid = document.getElementById('api-cursos-grid');
   grid.innerHTML = '';
@@ -217,7 +217,7 @@ function renderizarCursos(cursos) {
   });
 }
 
-// 4. Filtrado interactivo
+// 4. aca filtro por categoria al hacer clic en las pastillas interactivas
 function filtrarCategoria(catId) {
   estadoActual.categoriaSeleccionada = catId;
   document.querySelectorAll('.cat-pill').forEach(btn => {
@@ -234,7 +234,7 @@ function filtrarCategoria(catId) {
   cargarCursosAPI();
 }
 
-// Event Listeners
+// aca escucho los eventos de busqueda predictiva y ordenamiento dinámico
 document.getElementById('api-search').addEventListener('input', (e) => {
   estadoActual.busqueda = e.target.value.trim();
   cargarCursosAPI();
@@ -245,7 +245,7 @@ document.getElementById('api-ordering').addEventListener('change', (e) => {
   cargarCursosAPI();
 });
 
-// Inicialización
+// aca inicializo la carga asincrona al cargar el DOM
 window.addEventListener('DOMContentLoaded', () => {
   cargarCategoriasAPI();
   cargarCursosAPI();

@@ -177,29 +177,29 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True     # aca hago que la sesion se cierre au
 SESSION_COOKIE_HTTPONLY = True            # aca protejo la cookie de sesion para que ningun script malicioso en JS pueda robarla (contra XSS)
 SESSION_SAVE_EVERY_REQUEST = True         # aca hago que cada clic o interaccion renueve el temporizador de los 30 minutos
 
-# Configuración de Django REST Framework (Unidad 3)
+# aca configuro Django REST Framework para la Unidad 3
 REST_FRAMEWORK = {
-    # Autenticación stateless con JWT
+    # aca defino la autenticacion stateless con JSON Web Tokens (JWT)
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    # Permiso global: GET libre para todos, POST/PUT/DELETE solo autenticados con JWT
+    # aca defino el permiso global: GET libre para lectura publica, POST/PUT/DELETE solo con token Bearer
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
-    # Paginación profesional de resultados (10 por página)
+    # aca configuro la paginacion estandar de 10 elementos por pagina
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 }
 
-# Configuración de tiempos de vida de tokens JWT
+# aca configuro los tiempos de expiracion y la firma criptografica de Simple JWT
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),   # token de acceso de corta duracion (15 minutos)
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),       # token de refresco valido por 1 dia
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
-    'ALGORITHM': 'HS256',
-    'SIGNING_KEY': SECRET_KEY,
-    'AUTH_HEADER_TYPES': ('Bearer',),
+    'ALGORITHM': 'HS256',                              # algoritmo simetrico estandar de firma HMAC-SHA256
+    'SIGNING_KEY': SECRET_KEY,                         # firma generada con la SECRET_KEY del .env
+    'AUTH_HEADER_TYPES': ('Bearer',),                  # cabecera esperada: Authorization: Bearer <Token>
 }
 

@@ -401,17 +401,40 @@ Para asegurar la calificación máxima en la **Evaluación 2**, audité el proye
   - `POST /api/token/refresh/` (`TokenRefreshView`): entrega un nuevo access token a partir del refresh token.
 
 #### Paso 17 — Consumo dinámico desde el Frontend con JavaScript (`fetch()`):
-- Creé la vista y plantilla interactiva [`templates/catalogo_api.html`](templates/catalogo_api.html) accesible desde la ruta `/catalogo-api/` y el menú de navegación.
+- Creé la vista y plantilla interactiva [`templates/catalogo_api.html`](templates/catalogo_api.html) accesible desde la ruta `/catalogo-api/` ("Explorar Cursos").
 - Implementé consumo asíncrono con JavaScript puro (`async/await` y `fetch()`):
-  1. Carga dinámica de botones de filtros consumiendo `/api/v1/categorias/`.
-  2. Búsqueda predictiva y ordenamiento consumiendo `/api/v1/cursos/?search=...`.
-  3. Renderizado reactivo de tarjetas en el DOM con badge de nivel, categoría, precio en moneda local y modal interactivo para visualizar el JSON crudo retornado por DRF.
-  4. Indicador en tiempo real de salud de la API (estado `200 OK`, latencia en milisegundos y contador de registros).
-  5. **Terminal / Sandbox de JWT:** interfaz para solicitar tokens JWT en vivo, probar el rechazo de peticiones anónimas (`401 Unauthorized`) y realizar creaciones autorizadas con cabecera `Authorization: Bearer <token>` (`201 Created`).
+  1. **Carga dinámica de categorías:** consume `/api/v1/categorias/` para renderizar los botones de filtro interactivos.
+  2. **Búsqueda predictiva y ordenamiento:** detecta eventos de entrada y consume `/api/v1/cursos/?search=...&ordering=...` sin recargar el navegador.
+  3. **Renderizado reactivo:** construye las tarjetas en el DOM con imagen temática, badge de nivel, duración, precio en moneda local ($ CLP) y enlace al detalle.
+  4. **Indicador de estado de API:** monitoriza en tiempo real la disponibilidad del servicio (punto verde de salud y contador dinámico de cursos).
 
 #### Paso 18 — Suite de Pruebas y Evidencias (`docs/unidad 3/pruebas_api.http`):
 - Escribí una suite completa de peticiones HTTP con 12 escenarios de prueba (login, refresh, filtros, rechazos 401, creaciones 201, consultas 200, errores 404 en JSON y borrados 204).
 - Redacté [`pasos_unidad_3.md`](pasos_unidad_3.md) con todas las preguntas teóricas de examen y fundamentación técnica para defender con máxima nota frente a la comisión evaluadora.
+
+#### Paso 19 — Integración profesional en Django Admin y control de acceso:
+- Personalicé el panel de administración ([`templates/admin/index.html`](templates/admin/index.html)) agregando un acceso directo empresarial hacia la **Browsable API de DRF** (`/api/v1/cursos/`) y el **Catálogo en Vivo** (`/catalogo-api/`).
+- Apliqué el principio de mínimo privilegio en la barra de navegación ([`templates/base.html`](templates/base.html)): el enlace al `Panel Admin` queda oculto a visitantes anónimos y solo se despliega cuando un usuario con rol de administrador (`user.is_staff`) inicia sesión activamente.
+
+---
+
+### Evidencias visuales de la Unidad 3 (API RESTful y Consumo Desacoplado)
+
+#### 1. Browsable API oficial de Django REST Framework (`/api/v1/cursos/`)
+Respuesta estructurada en formato JSON puro con código HTTP 200 OK, cabeceras de servidor, paginación integrada y soporte para filtros:
+![API RESTful Cursos Browsable API](evidencias/api-drf-cursos-navegable.png)
+
+#### 2. Catálogo dinámico desacoplado consumiendo la API con JavaScript `fetch()` (`/catalogo-api/`)
+Interfaz cliente que consume los datos de los endpoints en tiempo real, permitiendo filtrar por categorías y buscar cursos instantáneamente sin recargar la página:
+![Catálogo Dinámico Frontend con Fetch](evidencias/catalogo-dinamico-api.png)
+
+#### 3. Panel de Administración con acceso directo a la API RESTful (`/admin/`)
+Panel Django Admin con tarjeta de integración directa para auditar los endpoints de DRF y el catálogo interactivo:
+![Panel Admin con acceso a API REST](evidencias/admin-acceso-api.png)
+
+#### 4. Endpoint de Categorías (`/api/v1/categorias/`)
+Listado de recursos relacionales serializado explícitamente sin exponer atributos internos:
+![Endpoint Categorias DRF](evidencias/api-drf-categorias.png)
 
 ---
 
