@@ -76,6 +76,7 @@
 - [x] 6.7 Verificación semántica de endpoints (códigos 200, 201, 204, 400, 401, 404) y suite de pruebas (`pruebas_api.http`)
 - [x] 6.8 Consumo desde el frontend mediante JavaScript (`fetch()`) para desacoplamiento cliente-servidor (`templates/catalogo_api.html`)
 - [x] 6.9 Documentación y preparación de defensa: `pasos_unidad_3.md` y actualización de `README.md` bajo "Unidad 3 / Evaluación 3"
+- [x] 6.10 Consumo e integración de API REST externa (`mindicador.cl` para conversión monetaria en tiempo real en la ficha de detalle y endpoint proxy `/api/v1/indicadores/`)
 
 ## Prompts de IA documentados (indicador 10)
 

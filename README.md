@@ -416,6 +416,13 @@ Para asegurar la calificación máxima en la **Evaluación 2**, audité el proye
 - Personalicé el panel de administración ([`templates/admin/index.html`](templates/admin/index.html)) agregando un acceso directo empresarial hacia la **Browsable API de DRF** (`/api/v1/cursos/`) y el **Catálogo en Vivo** (`/catalogo-api/`).
 - Apliqué el principio de mínimo privilegio en la barra de navegación ([`templates/base.html`](templates/base.html)): el enlace al `Panel Admin` queda oculto a visitantes anónimos y solo se despliega cuando un usuario con rol de administrador (`user.is_staff`) inicia sesión activamente.
 
+#### Paso 20 — Consumo e Integración de API REST Externa (`mindicador.cl`):
+- **Requerimiento cumplido:** Integré el consumo de un servicio web externo de terceros desde el lado del servidor para complementar la API REST interna desarrollada con DRF.
+- **Servicio seleccionado:** Utilicé la API pública chilena **`mindicador.cl`** (`https://mindicador.cl/api`), que entrega los valores económicos oficiales del Dólar Observado y la UF en tiempo real.
+- **Capa de Servicios Desacoplada ([`cursos/services.py`](cursos/services.py)):** Implementé la función `obtener_conversion_monedas` que realiza peticiones HTTP GET estructuradas con `urllib.request`, control de timeout y captura de excepciones para asegurar alta disponibilidad (si la red externa falla, la web no se cae).
+- **Integración en la Ficha de Detalle ([`templates/detalle.html`](templates/detalle.html)):** Incorporé una tarjeta destacada en verde esmeralda que presenta el valor del curso convertido dinámicamente a **Dólares ($ USD)** y **Unidades de Fomento (UF)** según la cotización oficial del día.
+- **Endpoint Proxy en nuestra API ([`cursos/api_urls.py`](cursos/api_urls.py)):** Expuse además el endpoint `/api/v1/indicadores/?precio=...` mediante `IndicadoresEconomicosView`, permitiendo que clientes externos también puedan consultar estas conversiones a través de nuestra propia API.
+
 ---
 
 ### Evidencias visuales de la Unidad 3 (API RESTful y Consumo Desacoplado)
@@ -435,6 +442,14 @@ Panel Django Admin con tarjeta de integración directa para auditar los endpoint
 #### 4. Endpoint de Categorías (`/api/v1/categorias/`)
 Listado de recursos relacionales serializado explícitamente sin exponer atributos internos:
 ![Endpoint Categorias DRF](evidencias/api-drf-categorias.png)
+
+#### 5. Consumo de API REST Externa (`mindicador.cl`) en la Ficha de Detalle
+Cálculo de conversión a Dólares y UF en tiempo real mediante consumo HTTP de terceros desde el servidor Django:
+![Ficha de Detalle con API Externa](evidencias/api-externa-mindicador-detalle.png)
+
+#### 6. Endpoint de Indicadores en nuestra Browsable API (`/api/v1/indicadores/`)
+Endpoint propio que expone la integración y cálculo con el servicio externo para clientes REST:
+![Endpoint Indicadores DRF](evidencias/api-externa-indicadores-drf.png)
 
 ---
 

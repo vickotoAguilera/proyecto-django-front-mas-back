@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Categoria, Instructor, Curso
 from .forms import CursoForm
+from .services import obtener_conversion_monedas
 
 # aca defino la vista del catalogo principal con buscador, filtros por categoria y coleccion de sesion
 def index(request):
@@ -83,10 +84,14 @@ def detalle_curso(request, slug):
         categoria=curso.categoria
     ).exclude(id=curso.id)[:3]
 
-    # aca armo el contexto con el curso encontrado y su lista de relacionados
+    # aca consulto la API externa de mindicador.cl para calcular el valor del curso en Dolares y UF
+    conversion = obtener_conversion_monedas(curso.precio)
+
+    # aca armo el contexto con el curso encontrado, su lista de relacionados y la conversion de moneda
     context = {
         'curso': curso,
         'relacionados': relacionados,
+        'conversion': conversion,
     }
 
     # aca le mando los datos a la plantilla 'detalle.html'

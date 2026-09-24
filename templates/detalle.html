@@ -29,8 +29,35 @@
                 <li><small>Categoría</small><strong>{{ curso.categoria.nombre }}</strong></li>
                 <li><small>Nivel</small><strong>{{ curso.nivel }}</strong></li>
                 <li><small>Duración</small><strong>{{ curso.duracion_horas }} horas</strong></li>
-                <li><small>Precio</small><strong>${{ curso.precio }}</strong></li>
+                <li><small>Precio (CLP)</small><strong>${{ curso.precio }}</strong></li>
             </ul>
+
+            {% if conversion.disponible %}
+            <!-- aca muestro la conversion en tiempo real consumiendo la API externa de mindicador.cl -->
+            <div style="background: #f0fdf4; border: 1px solid #86efac; border-left: 4px solid #059669; border-radius: 10px; padding: 14px 18px; margin: 20px 0 24px; box-shadow: 0 2px 6px rgba(5, 150, 105, 0.08);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                            <span style="background: #059669; color: #ffffff; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.4px;">API REST Externa</span>
+                            <strong style="color: #064e3b; font-size: 0.95rem;">Conversor Económico en Tiempo Real</strong>
+                        </div>
+                        <p style="margin: 0; font-size: 0.82rem; color: #047857;">
+                            Cotización oficial obtenida desde el servicio público de <strong>mindicador.cl</strong> (Dólar: ${{ conversion.dolar }} CLP &bull; UF: ${{ conversion.uf }} CLP).
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <div style="background: #ffffff; border: 1px solid #a7f3d0; border-radius: 8px; padding: 8px 14px; text-align: center; min-width: 105px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                            <small style="display: block; font-size: 0.68rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">En Dólares</small>
+                            <strong style="color: #047857; font-size: 1.12rem; font-weight: 800;">${{ conversion.precio_usd }} USD</strong>
+                        </div>
+                        <div style="background: #ffffff; border: 1px solid #a7f3d0; border-radius: 8px; padding: 8px 14px; text-align: center; min-width: 105px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+                            <small style="display: block; font-size: 0.68rem; color: #64748b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">En UF</small>
+                            <strong style="color: #047857; font-size: 1.12rem; font-weight: 800;">{{ conversion.precio_uf }} UF</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
 
             {% if user.is_authenticated %}
             <!-- Acciones CRUD de Administración (Solo para usuarios autenticados) -->

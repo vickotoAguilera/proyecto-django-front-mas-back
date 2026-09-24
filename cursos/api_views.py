@@ -1,7 +1,11 @@
 from rest_framework import viewsets, filters
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Categoria, Instructor, Curso
 from .serializers import CategoriaSerializer, InstructorSerializer, CursoSerializer
+from .services import obtener_conversion_monedas
 
 # aca defino el ViewSet de Categoria: gestiona automaticamente GET (listar/detalle), POST, PUT, DELETE
 class CategoriaViewSet(viewsets.ModelViewSet):
@@ -30,3 +34,18 @@ class CursoViewSet(viewsets.ModelViewSet):
     filterset_fields = ['categoria', 'nivel']
     search_fields = ['titulo', 'descripcion']
     ordering_fields = ['precio', 'duracion_horas', 'id']
+
+
+# aca defino el endpoint que expone la conversion monetaria consumiendo la API externa de mindicador.cl
+class IndicadoresEconomicosView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        precio = request.query_params.get('precio', '29990')
+        try:
+            precio_num = float(precio)
+        except ValueError:
+            precio_num = 29990.0
+
+        datos = obtener_conversion_monedas(precio_num)
+        return Response(datos)
