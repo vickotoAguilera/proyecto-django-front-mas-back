@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+
+{% block title %}Catálogo de Cursos | Academia Verde{% endblock %}
+
+{% block content %}
+<!-- Hero Principal -->
+<section style="background: linear-gradient(135deg, #064e3b 0%, #065f46 60%, #047857 100%); color: white; padding: 52px 20px 48px; border-radius: 0 0 28px 28px; box-shadow: 0 10px 25px -5px rgba(6, 78, 59, 0.25);">
+  <div style="max-width: 1100px; margin: 0 auto; text-align: center;">
+    <div style="display: inline-flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 18px;">
+      <span style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); padding: 5px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.3px;">Educación Continua</span>
+      <span style="background: #10b981; color: white; padding: 5px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">Búsqueda en Tiempo Real</span>
+      <span style="background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); padding: 5px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">Certificación Profesional</span>
+    </div>
+
+    <h1 style="font-size: 2.6rem; font-weight: 800; margin: 0 0 14px 0; line-height: 1.2; letter-spacing: -0.5px;">
+      Explora Nuestro Catálogo de Cursos
+    </h1>
+    <p style="font-size: 1.1rem; opacity: 0.92; max-width: 720px; margin: 0 auto 24px auto; line-height: 1.6;">
+      Aprende habilidades de alta demanda con instructores expertos en tecnología, desarrollo de software, diseño y negocios.
+    </p>
+
+    <!-- Contador sutil de disponibilidad -->
+    <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(0, 0, 0, 0.22); border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 20px; padding: 6px 18px; font-size: 0.88rem;">
+      <span id="api-status-dot" style="width: 8px; height: 8px; border-radius: 50%; background: #10b981; display: inline-block;"></span>
+      <span>Mostrando <strong id="api-count">0</strong> cursos disponibles</span>
+    </div>
+  </div>
+</section>
+
+<div style="max-width: 1100px; margin: 30px auto; padding: 0 20px;">
+
+  <!-- Barra de búsqueda y filtros interactiva -->
+  <div style="background: white; border-radius: 16px; padding: 20px 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; margin-bottom: 28px;">
+    
+    <!-- Buscador y ordenamiento -->
+    <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; align-items: center;">
+      <div style="flex: 1; min-width: 260px; position: relative;">
+        <input type="text" id="api-search" placeholder="Buscar cursos por título o descripción..." 
+               style="width: 100%; padding: 11px 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 0.95rem; outline: none; transition: border 0.2s;"
+               onfocus="this.style.borderColor='#10b981'" onblur="this.style.borderColor='#e2e8f0'">
+      </div>
+      <select id="api-ordering" style="padding: 11px 16px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 0.9rem; background: white; cursor: pointer; color: #334155; font-weight: 500;">
+        <option value="-id">Más recientes primero</option>
+        <option value="precio">Precio: menor a mayor</option>
+        <option value="-precio">Precio: mayor a menor</option>
+        <option value="duracion_horas">Duración: menor a mayor</option>
+      </select>
+    </div>
+
+    <!-- Botones de filtros por categoría -->
+    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+      <span style="font-size: 0.84rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Categorías:</span>
+      <div id="api-categorias-container" style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <button onclick="filtrarCategoria(null)" class="cat-pill active" data-cat="all"
+                style="padding: 6px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 600; border: 1px solid #10b981; background: #10b981; color: white; cursor: pointer; transition: all 0.2s;">
+          Todas
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grilla dinámica de tarjetas de cursos -->
+  <div id="api-cursos-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 24px;">
+    <!-- Estado de carga -->
+    <div style="background: white; border-radius: 16px; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); text-align: center; color: #6b7280; grid-column: 1/-1;">
+      Cargando catálogo de cursos...
+    </div>
+  </div>
+
+</div>
+
+<!-- Lógica JavaScript del Cliente Asíncrono -->
+<script>
+let estadoActual = {
+  categoriaSeleccionada: null,
+  busqueda: '',
+  orden: '-id',
+  cursosCache: []
+};
+
+// Mapa de imágenes representativas según categoría
+const imagenesCategorias = {
+  1: "https://images.pexels.com/photos/1181675/pexels-photo-1181675.jpeg?auto=compress&cs=tinysrgb&w=600",
+  2: "https://images.pexels.com/photos/574071/pexels-photo-574071.jpeg?auto=compress&cs=tinysrgb&w=600",
+  3: "https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=600",
+  4: "https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg?auto=compress&cs=tinysrgb&w=600",
+  default: "https://images.pexels.com/photos/546819/pexels-photo-546819.jpeg?auto=compress&cs=tinysrgb&w=600"
+};
+
+// 1. Cargar categorías
+async function cargarCategoriasAPI() {
+  try {
+    const res = await fetch('/api/v1/categorias/');
+    if (!res.ok) throw new Error('Error al cargar categorías');
+    const data = await res.json();
+    const categorias = data.results ? data.results : data;
+    
+    const container = document.getElementById('api-categorias-container');
+    container.innerHTML = `
+      <button onclick="filtrarCategoria(null)" class="cat-pill active" data-cat="all"
+              style="padding: 6px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 600; border: 1px solid #10b981; background: #10b981; color: white; cursor: pointer; transition: all 0.2s;">
+        Todas
+      </button>
+    `;
+
+    categorias.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'cat-pill';
+      btn.dataset.cat = cat.id;
+      btn.style.cssText = "padding: 6px 14px; border-radius: 20px; font-size: 0.84rem; font-weight: 600; border: 1px solid #cbd5e1; background: white; color: #475569; cursor: pointer; transition: all 0.2s;";
+      btn.textContent = cat.nombre;
+      btn.onclick = () => filtrarCategoria(cat.id);
+      container.appendChild(btn);
+    });
+  } catch (err) {
+    console.error('Error al cargar categorías:', err);
+  }
+}
+
+// 2. Cargar cursos con filtros, búsqueda y ordenamiento
+async function cargarCursosAPI() {
+  const statusDot = document.getElementById('api-status-dot');
+  const countEl = document.getElementById('api-count');
+  const grid = document.getElementById('api-cursos-grid');
+
+  if (statusDot) statusDot.style.background = '#fbbf24';
+
+  const params = new URLSearchParams();
+  if (estadoActual.busqueda) params.append('search', estadoActual.busqueda);
+  if (estadoActual.categoriaSeleccionada) params.append('categoria', estadoActual.categoriaSeleccionada);
+  if (estadoActual.orden) params.append('ordering', estadoActual.orden);
+
+  const url = `/api/v1/cursos/?${params.toString()}`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+
+    const data = await res.json();
+    const cursos = data.results ? data.results : data;
+    estadoActual.cursosCache = cursos;
+
+    if (statusDot) statusDot.style.background = '#10b981';
+    if (countEl) countEl.textContent = data.count !== undefined ? data.count : cursos.length;
+
+    renderizarCursos(cursos);
+
+  } catch (err) {
+    console.error('Error al cargar cursos:', err);
+    if (statusDot) statusDot.style.background = '#ef4444';
+    grid.innerHTML = `
+      <div style="grid-column: 1/-1; background: #fef2f2; color: #991b1b; padding: 24px; border-radius: 12px; text-align: center; border: 1px solid #fecaca;">
+        No pudimos conectar con el servidor para cargar los cursos. Por favor, intente nuevamente más tarde.
+      </div>
+    `;
+  }
+}
+
+// 3. Renderizar tarjetas de cursos en el DOM
+function renderizarCursos(cursos) {
+  const grid = document.getElementById('api-cursos-grid');
+  grid.innerHTML = '';
+
+  if (cursos.length === 0) {
+    grid.innerHTML = `
+      <div style="grid-column: 1/-1; background: white; padding: 48px 20px; border-radius: 16px; text-align: center; color: #64748b; border: 1px dashed #cbd5e1;">
+        <h3 style="margin: 0 0 6px 0; color: #1e293b; font-size: 1.15rem;">No se encontraron cursos</h3>
+        <p style="margin: 0; font-size: 0.9rem;">Prueba modificando tus términos de búsqueda o selecciona otra categoría.</p>
+      </div>
+    `;
+    return;
+  }
+
+  cursos.forEach((curso) => {
+    const imgUrl = imagenesCategorias[curso.categoria] || imagenesCategorias.default;
+    const precioFmt = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(curso.precio);
+
+    const card = document.createElement('div');
+    card.style.cssText = "background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.06); border: 1px solid #f1f5f9; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s;";
+    card.onmouseenter = () => { card.style.transform = 'translateY(-4px)'; card.style.boxShadow = '0 12px 24px rgba(6, 78, 59, 0.12)'; };
+    card.onmouseleave = () => { card.style.transform = 'translateY(0)'; card.style.boxShadow = '0 4px 15px rgba(0,0,0,0.06)'; };
+
+    card.innerHTML = `
+      <div style="height: 165px; overflow: hidden; position: relative;">
+        <img src="${imgUrl}" alt="${curso.titulo}" style="width: 100%; height: 100%; object-fit: cover;">
+        <span style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); color: white; font-size: 0.75rem; padding: 3px 9px; border-radius: 6px; font-weight: 600;">
+          ${curso.nivel}
+        </span>
+        <span style="position: absolute; bottom: 12px; left: 12px; background: #059669; color: white; font-size: 0.72rem; padding: 4px 9px; border-radius: 6px; font-weight: 700; letter-spacing: 0.3px;">
+          ${curso.categoria_nombre || 'Categoría ' + curso.categoria}
+        </span>
+      </div>
+
+      <div style="padding: 20px; display: flex; flex-direction: column; flex: 1;">
+        <h3 style="margin: 0 0 10px 0; font-size: 1.15rem; color: #064e3b; line-height: 1.3; font-weight: 700;">
+          ${curso.titulo}
+        </h3>
+        <p style="margin: 0 0 18px 0; font-size: 0.88rem; color: #64748b; line-height: 1.5; flex: 1;">
+          ${curso.descripcion.length > 100 ? curso.descripcion.substring(0, 100) + '...' : curso.descripcion}
+        </p>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 14px; margin-bottom: 14px; font-size: 0.84rem; color: #475569;">
+          <span>Instructor: ${curso.instructor_nombre || 'Instructor ' + curso.instructor}</span>
+          <span>Duración: ${curso.duracion_horas} hrs</span>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 1.25rem; font-weight: 800; color: #047857;">${precioFmt}</span>
+          <a href="/curso/${curso.slug}/" class="btn btn-primary btn-sm" style="padding: 8px 16px; font-size: 0.85rem; border-radius: 8px; text-decoration: none; font-weight: 600; color: white;">
+            Ver detalle
+          </a>
+        </div>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+}
+
+// 4. Filtrado interactivo
+function filtrarCategoria(catId) {
+  estadoActual.categoriaSeleccionada = catId;
+  document.querySelectorAll('.cat-pill').forEach(btn => {
+    if ((catId === null && btn.dataset.cat === 'all') || (btn.dataset.cat == catId)) {
+      btn.style.background = '#10b981';
+      btn.style.color = 'white';
+      btn.style.borderColor = '#10b981';
+    } else {
+      btn.style.background = 'white';
+      btn.style.color = '#475569';
+      btn.style.borderColor = '#cbd5e1';
+    }
+  });
+  cargarCursosAPI();
+}
+
+// Event Listeners
+document.getElementById('api-search').addEventListener('input', (e) => {
+  estadoActual.busqueda = e.target.value.trim();
+  cargarCursosAPI();
+});
+
+document.getElementById('api-ordering').addEventListener('change', (e) => {
+  estadoActual.orden = e.target.value;
+  cargarCursosAPI();
+});
+
+// Inicialización
+window.addEventListener('DOMContentLoaded', () => {
+  cargarCategoriasAPI();
+  cargarCursosAPI();
+});
+</script>
+{% endblock %}

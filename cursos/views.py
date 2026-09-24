@@ -4,6 +4,7 @@ from django.contrib import messages
 from .models import Categoria, Instructor, Curso
 from .forms import CursoForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 
 # aca defino la vista del catalogo principal con buscador, filtros por categoria y coleccion de sesion
 def index(request):
@@ -161,4 +162,15 @@ def curso_eliminar(request, slug):
     # si la peticion es GET, aca muestro la plantilla de confirmacion para preguntar si esta seguro
     return render(request, 'curso_confirm_delete.html', {'curso': curso})
 
+
+# aca defino la vista para el modulo interactivo que consume la API REST via JavaScript asincrono (fetch)
+def catalogo_api(request):
+    return render(request, 'catalogo_api.html')
+
+# aca defino la vista protegida para la consola tecnica de la evaluacion 3 accesible por administradores
+@staff_member_required
+def consola_evaluacion_3(request):
+    return render(request, 'admin/consola_evaluacion_3.html', {
+        'title': 'Consola Técnica — Evaluación 3: API REST & JWT',
+    })
 

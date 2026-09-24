@@ -1,6 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic.base import RedirectView
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
 
 # aca defino las rutas principales de todo el proyecto django
 urlpatterns = [
@@ -13,7 +17,14 @@ urlpatterns = [
     # aca conecto el sistema de login y logout nativo de django
     path('accounts/', include('django.contrib.auth.urls')),
 
-    # aca incluyo las rutas de mi aplicacion cursos
+    # Endpoints de Autenticación JWT Stateless (Unidad 3)
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+
+    # Endpoints de la API RESTful versionada v1
+    path('api/v1/', include('cursos.api_urls')),
+
+    # aca incluyo las rutas de mi aplicacion cursos (interfaz web tradicional)
     path('', include('cursos.urls')),
 ]
 

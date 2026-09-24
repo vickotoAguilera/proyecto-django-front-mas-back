@@ -10,23 +10,25 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
+from datetime import timedelta
 from pathlib import Path
+from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Cargamos las variables de entorno desde el archivo .env
+load_dotenv(BASE_DIR / '.env')
+
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-9!^-^r6cx0ujo9u7!1%-t7#=t$b!02a!_u_uc08-br+z1$n0%5'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-9!^-^r6cx0ujo9u7!1%-t7#=t$b!02a!_u_uc08-br+z1$n0%5')
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -37,8 +39,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cursos',
+    
+    # Paquetes externos para la API RESTful (Unidad 3)
+    'rest_framework',
+    'rest_framework_simplejwt',
     'django_filters',
+    # App local
+    'cursos',
 ]
 
 MIDDLEWARE = [
@@ -76,16 +83,26 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
 # aca configuro la conexion activa a MySQL (Docker / WampServer) para la evaluacion 2
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'cursos_db',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
+DB_ENGINE = os.getenv('DB_ENGINE', 'mysql')
+if DB_ENGINE == 'mysql':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.getenv('DB_NAME', 'cursos_db'),
+            'USER': os.getenv('DB_USER', 'root'),
+            'PASSWORD': os.getenv('DB_PASSWORD', 'root'),
+            'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+            'PORT': os.getenv('DB_PORT', '3306'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
 
 # aca dejo la alternativa de sqlite guardada por si en algun momento se requiere desarrollo offline sin levantar docker
 # DATABASES = {
@@ -159,4 +176,30 @@ SESSION_COOKIE_AGE = 1800                  # aca hago que la sesion expire a los
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True     # aca hago que la sesion se cierre automaticamente si el usuario cierra el navegador
 SESSION_COOKIE_HTTPONLY = True            # aca protejo la cookie de sesion para que ningun script malicioso en JS pueda robarla (contra XSS)
 SESSION_SAVE_EVERY_REQUEST = True         # aca hago que cada clic o interaccion renueve el temporizador de los 30 minutos
+
+# Configuración de Django REST Framework (Unidad 3)
+REST_FRAMEWORK = {
+    # Autenticación stateless con JWT
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    # Permiso global: GET libre para todos, POST/PUT/DELETE solo autenticados con JWT
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ),
+    # Paginación profesional de resultados (10 por página)
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+}
+
+# Configuración de tiempos de vida de tokens JWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 

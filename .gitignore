@@ -2,6 +2,9 @@
 venv/
 .venv/
 
+# Variables de entorno y credenciales sensibles (requisito U3)
+.env
+
 # Python
 __pycache__/
 *.py[cod]
@@ -18,3 +21,5 @@ docs/
 # IDE
 .vscode/
 .idea/
+pyrefly.toml
+pyproject.toml

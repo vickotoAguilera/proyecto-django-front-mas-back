@@ -341,3 +341,83 @@ Para asegurar la calificación máxima en la **Evaluación 2**, audité el proye
 | **4** | **Desarrollo Backend e Integración** *(Criterio 2.1.4)* | Construye un backend altamente modular, escalable y limpio, asegurando la consistencia en el flujo de datos. | Arquitectura MVT desacoplada, consultas optimizadas con `select_related('categoria', 'instructor')` para evitar el problema N+1, exclusión de curso activo en relacionados (`exclude(id=curso.id)`), plantillas base jerárquicas y compatibilidad asegurada para runtime. |
 | **5** | **Gestión de Sesiones y Autenticación** *(Actividad General)* | Maximiza la seguridad del manejo de sesiones, implementando políticas avanzadas de expiración o perfiles de rol. | Flujo de autenticación con `django.contrib.auth`, control de acceso con decorador `@login_required`, blindaje contra ataques CSRF con `{% csrf_token %}` en formularios POST, **políticas avanzadas en `settings.py`** (`SESSION_COOKIE_AGE = 1800`, `SESSION_EXPIRE_AT_BROWSER_CLOSE = True`, `SESSION_COOKIE_HTTPONLY = True`, `SESSION_SAVE_EVERY_REQUEST = True`) y **gestión obligatoria de colecciones en sesión (`request.session['cursos_vistos']`)**. |
 | **6** | **Uso de Inteligencia Artificial (IA)** *(Criterio 2.1.4 & Actividad)* | Integra IA de forma estratégica y crítica, auditando, optimizando y adaptando las sugerencias al requerimiento. | Documentación explícita de prompts para formularios, validaciones, seguridad y colecciones, acompañada de 4 decisiones de **auditoría crítica humana** (persistencia MySQL vs SQLite, integridad de borrado por POST, blindaje de rutas anónimas y compatibilidad de versiones de motores relacionales). |
+
+---
+
+## Unidad 3 / Evaluación 3 — API RESTful con Django REST Framework y JWT (Diario de trabajo)
+
+> En esta etapa di el salto profesional de la asignatura: mi aplicación dejó de entregar solamente páginas HTML para navegadores y aprendió a comunicarse de forma estándar, desacoplada y segura con cualquier cliente externo (apps móviles, microservicios, SPAs o interfaces web modernas) exponiendo un servicio web **API RESTful**.
+
+### ¿Qué teníamos en la Unidad 2 vs qué implementé en la Unidad 3?
+
+| Aspecto de Arquitectura | Unidad 2 (Framework Back End Tradicional) | Unidad 3 (API RESTful Desacoplada y Stateless) |
+| :--- | :--- | :--- |
+| **Tipo de Respuesta** | Servidor genera vistas HTML con plantillas MVT (`render()`). | Servidor entrega y recibe datos estructurados en formato **JSON puro** (`application/json`). |
+| **Manejo de Estado** | Stateful: basado en **sesiones HTTP de servidor** (`request.session`) y cookies de sesión. | **Stateless (Sin Estado)**: el servidor no almacena sesiones de clientes API; cada petición es autosuficiente. |
+| **Autenticación** | `django.contrib.auth` con cookies de sesión y formularios con `{% csrf_token %}`. | **JSON Web Tokens (JWT)** mediante `djangorestframework-simplejwt` con cabecera `Authorization: Bearer <Token>`. |
+| **Capa de Negocio** | `ModelForm` (`CursoForm`) para validar datos en servidor. | **Serializers (`ModelSerializer`)** para traducir entre objetos Django ORM y JSON, con validaciones estrictas. |
+| **Enrutamiento** | URLs individuales definidas a mano para cada vista (`path()`). | **`DefaultRouter`** automático que genera rutas REST canónicas en plural (`/api/v1/cursos/`). |
+| **Gestión de Secretos** | `SECRET_KEY` hardcodeada directamente en `settings.py`. | **Blindaje con variables de entorno (`.env`)** mediante `python-dotenv`, excluida del control de versiones. |
+| **Consumo Frontend** | Navegador recarga páginas completas en cada acción. | **JavaScript asíncrono (`fetch()`)** en `/catalogo-api/` para consumir la API en tiempo real sin recargar. |
+
+---
+
+### Paso a paso de lo que construí en la Unidad 3
+
+#### Paso 13 — Blindaje de credenciales y variables de entorno (`.env`):
+- **Aislamiento de la `SECRET_KEY`:** Siguiendo la exigencia de seguridad de la lectura oficial, extraje la clave secreta y los parámetros de conexión de base de datos fuera del código fuente hacia un archivo `.env`.
+- **Integración con `python-dotenv`:** Configuré [`config/settings.py`](config/settings.py) para cargar las variables automáticamente al iniciar el servidor.
+- **Protección en Git:** Añadí `.env` a `.gitignore` para garantizar que ninguna credencial privada llegue al repositorio de GitHub, y creé `.env.example` como plantilla documentada para otros desarrolladores.
+
+#### Paso 14 — Configuración de Django REST Framework y Simple JWT:
+- Instalé en el entorno virtual `venv`: `djangorestframework==3.15.2`, `djangorestframework-simplejwt==5.5.1` y `python-dotenv==1.2.3`.
+- Registré `'rest_framework'` y `'rest_framework_simplejwt'` en `INSTALLED_APPS`.
+- Configuré el diccionario `REST_FRAMEWORK` con:
+  - `DEFAULT_AUTHENTICATION_CLASSES`: Autenticación stateless mediante `JWTAuthentication`.
+  - `DEFAULT_PERMISSION_CLASSES`: `IsAuthenticatedOrReadOnly` (permite consultas públicas `GET` a cualquier cliente, pero exige token JWT para crear, modificar o eliminar registros con `POST`, `PUT`, `DELETE`).
+  - `DEFAULT_PAGINATION_CLASS`: Paginación profesional con `PageNumberPagination` fijada en 10 elementos por página.
+- Configuré `SIMPLE_JWT` con firma criptográfica `HS256`, Access Token con ciclo de vida corto (15 minutos) y Refresh Token de respaldo (1 día).
+
+#### Paso 15 — Serializadores explícitos y validaciones en servidor (`cursos/serializers.py`):
+- Creé los serializadores `CategoriaSerializer`, `InstructorSerializer` y `CursoSerializer`.
+- **Regla de oro de seguridad aplicada:** **PROHIBÍ el uso de `fields = '__all__'`**, listando cada campo de forma explícita para evitar la exposición accidental o silenciosa de campos internos.
+- Enriquecí el serializador de cursos con campos de solo lectura (`categoria_nombre` e `instructor_nombre`) para evitar viajes adicionales a la base de datos desde el cliente.
+- Implementé validaciones de servidor (`validate_precio` >= 0 y `validate_duracion_horas` > 0) y autogeneración de slug único mediante `slugify()` y `uuid` en el método `create()`.
+
+#### Paso 16 — ViewSets y Enrutamiento Automático (`cursos/api_views.py` y `cursos/api_urls.py`):
+- Desarrollé `CursoViewSet`, `CategoriaViewSet` e `InstructorViewSet` heredando de `viewsets.ModelViewSet`.
+- Optimicé la consulta de cursos con `select_related('categoria', 'instructor')` para eliminar consultas SQL redundantes (problema N+1).
+- Agregué capacidades avanzadas de filtrado por categoría/nivel, búsqueda textual (`SearchFilter`) y ordenamiento dinámico (`OrderingFilter`).
+- Creé el enrutador `DefaultRouter` registrando los recursos con sustantivos en plural según las buenas prácticas internacionales:
+  - `GET /api/v1/cursos/` (listado paginado)
+  - `POST /api/v1/cursos/` (crear curso con Bearer Token)
+  - `GET /api/v1/cursos/<id>/` (detalle de curso)
+  - `PUT /api/v1/cursos/<id>/` (actualización completa)
+  - `PATCH /api/v1/cursos/<id>/` (actualización parcial)
+  - `DELETE /api/v1/cursos/<id>/` (eliminación)
+  - Rutas equivalentes para `/api/v1/categorias/` e `/api/v1/instructores/`.
+- Conecté en `config/urls.py` los endpoints de autenticación JWT:
+  - `POST /api/token/` (`TokenObtainPairView`): recibe usuario/contraseña y entrega el par de tokens.
+  - `POST /api/token/refresh/` (`TokenRefreshView`): entrega un nuevo access token a partir del refresh token.
+
+#### Paso 17 — Consumo dinámico desde el Frontend con JavaScript (`fetch()`):
+- Creé la vista y plantilla interactiva [`templates/catalogo_api.html`](templates/catalogo_api.html) accesible desde la ruta `/catalogo-api/` y el menú de navegación.
+- Implementé consumo asíncrono con JavaScript puro (`async/await` y `fetch()`):
+  1. Carga dinámica de botones de filtros consumiendo `/api/v1/categorias/`.
+  2. Búsqueda predictiva y ordenamiento consumiendo `/api/v1/cursos/?search=...`.
+  3. Renderizado reactivo de tarjetas en el DOM con badge de nivel, categoría, precio en moneda local y modal interactivo para visualizar el JSON crudo retornado por DRF.
+  4. Indicador en tiempo real de salud de la API (estado `200 OK`, latencia en milisegundos y contador de registros).
+  5. **Terminal / Sandbox de JWT:** interfaz para solicitar tokens JWT en vivo, probar el rechazo de peticiones anónimas (`401 Unauthorized`) y realizar creaciones autorizadas con cabecera `Authorization: Bearer <token>` (`201 Created`).
+
+#### Paso 18 — Suite de Pruebas y Evidencias (`docs/unidad 3/pruebas_api.http`):
+- Escribí una suite completa de peticiones HTTP con 12 escenarios de prueba (login, refresh, filtros, rechazos 401, creaciones 201, consultas 200, errores 404 en JSON y borrados 204).
+- Redacté [`pasos_unidad_3.md`](pasos_unidad_3.md) con todas las preguntas teóricas de examen y fundamentación técnica para defender con máxima nota frente a la comisión evaluadora.
+
+---
+
+### Auditoría Crítica de Inteligencia Artificial (Unidad 3)
+
+Durante el desarrollo de esta unidad, apliqué un control riguroso sobre las propuestas de la IA, mitigando los 3 riesgos identificados en el programa de estudio:
+1. **Riesgo de exposición silenciosa:** La IA suele sugerir `fields = '__all__'` en los serializers. Audité y rechacé esta práctica, exigiendo listas explícitas de atributos para garantizar el principio de mínimo privilegio.
+2. **Riesgo de alucinación de campos:** Verifiqué que cada campo declarado en los serializers coincida con la estructura real de los modelos en `cursos/models.py`.
+3. **Riesgo de seguridad en JWT:** Comprobé que el payload Base64 del token solo contenga identificadores y marcas de tiempo (`user_id`, `exp`, `iat`), asegurando que jamás viajen contraseñas, correos ni datos sensibles que puedan ser leídos por terceros.

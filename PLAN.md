@@ -159,3 +159,48 @@ Repasar los 12 indicadores con el usuario y marcar evidencias en `PROGRESO.md`.
 ### 5.11 Gestión de Colecciones en Sesión HTTP (Actividad Práctica Obligatoria)
 - Implementar en `request.session` el seguimiento de una colección dinámica: lista de **"Cursos vistos recientemente"** o **"Colección de cursos guardados/favoritos"**.
 - Renderizar la colección persistida en sesión dentro de la interfaz web sin requerir autenticación previa.
+
+---
+
+## Fase 6 — Evaluación 3: API RESTful con DRF, JWT y Buenas Prácticas
+
+> Basado en la lectura oficial de la Unidad 3 (`docs/unidad 3/Lectura eva 3.pdf`): arquitectura desacoplada cliente-servidor, Django REST Framework, autenticación stateless con JWT (Simple JWT), serializers explícitos (sin `fields = '__all__'`), ViewSets, DefaultRouter, protección de `SECRET_KEY` en `.env` y buenas prácticas de industria (códigos semánticos, versionado `/api/v1/`, paginación).
+
+### 6.1 Dependencias y Variables de Entorno (`.env`)
+- Instalación de `djangorestframework`, `djangorestframework-simplejwt` y `python-dotenv`.
+- Protección de `SECRET_KEY` y credenciales de BD en `.env` (excluido de git).
+- Creación de `.env.example` para documentación en el repositorio.
+
+### 6.2 Configuración de DRF y Simple JWT en `settings.py`
+- Registro de `'rest_framework'` y `'rest_framework_simplejwt'` en `INSTALLED_APPS`.
+- Configuración de `REST_FRAMEWORK`:
+  - `DEFAULT_AUTHENTICATION_CLASSES`: `JWTAuthentication`.
+  - `DEFAULT_PERMISSION_CLASSES`: `IsAuthenticatedOrReadOnly`.
+  - `DEFAULT_PAGINATION_CLASS`: `PageNumberPagination` (`PAGE_SIZE = 10`).
+- Configuración de expiración de tokens con `SIMPLE_JWT` (`ACCESS_TOKEN_LIFETIME = 15m`, `REFRESH_TOKEN_LIFETIME = 1d`).
+
+### 6.3 Serializadores con Validación y Auditoría (`cursos/serializers.py`)
+- Creación de `CategoriaSerializer`, `InstructorSerializer` y `CursoSerializer`.
+- Definición explícita de `fields = [...]` (prohibición estricta de `fields = '__all__'` para prevenir exposición involuntaria de datos).
+- Validaciones en servidor dentro del serializer (`validate_precio`, `validate_duracion_horas`).
+- Inclusión de campos amigables calculados/lectura (`categoria_nombre`, `instructor_nombre`).
+
+### 6.4 ViewSets y Enrutamiento Automático (`cursos/api_views.py` y `cursos/api_urls.py`)
+- Implementación de `CategoriaViewSet`, `InstructorViewSet` y `CursoViewSet` heredando de `ModelViewSet`.
+- Soporte para filtros y búsqueda de cursos.
+- Registro en `DefaultRouter` con nombres de recursos en plural (`categorias`, `instructores`, `cursos`).
+- Rutas versionadas: `/api/v1/` conectadas en `config/urls.py`.
+- Endpoints de autenticación JWT: `/api/token/` y `/api/token/refresh/`.
+
+### 6.5 Buenas Prácticas y Manejo Consistente de Errores
+- Respuestas de error estructuradas en JSON ante códigos 400 y 404 (sin páginas HTML).
+- Paginación estandarizada en respuestas de lista.
+- Códigos de estado HTTP semánticos: `200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, `401 Unauthorized`, `404 Not Found`.
+
+### 6.6 Suite de Pruebas y Evidencias
+- Creación de colección de pruebas HTTP (`docs/unidad 3/pruebas_api.http`) para Postman, VS Code o cURL.
+- Verificación de ciclo completo: login JWT, consulta anónima GET, bloqueo de POST sin token (401), creación con Bearer token (201), actualización (200) y borrado (204).
+
+### 6.7 Guía de Defensa y Actualización de Documentación
+- Creación de `pasos_unidad_3.md` con preguntas de examen de la Unidad 3 (stateless, JWT, access vs refresh, payload en Base64, por qué evitar `__all__`, riesgos de IA: alucinación de campos y dependencias fantasma).
+- Actualización de `PROGRESO.md` y `README.md` bajo la sección **"Unidad 3 / Evaluación 3"**.

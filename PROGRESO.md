@@ -65,17 +65,30 @@
 - [x] 5.16 Implementar manejo de colecciones en sesión HTTP (`request.session`) para cursos visitados o favoritos (Actividad Práctica Obligatoria)
 - [x] 5.17 Refactorización limpia de componentes visuales (CSS de alertas desacoplado de templates HTML) y resolución de advertencias de linter en runtime
 
+## Fase 6 — Evaluación 3: API RESTful con Django REST Framework y JWT
 
+- [x] 6.1 Instalación de dependencias: `djangorestframework`, `djangorestframework-simplejwt` y `python-dotenv` en `venv`
+- [x] 6.2 Blindaje de credenciales: creación de `.env` (ignorado en `.gitignore`) y `.env.example`
+- [x] 6.3 Configuración en `settings.py`: carga de `.env`, registro de apps y configuración de `REST_FRAMEWORK` + `SIMPLE_JWT`
+- [x] 6.4 Creación de serializadores explícitos (`cursos/serializers.py`) para `Categoria`, `Instructor` y `Curso` (sin `fields = '__all__'`)
+- [x] 6.5 Creación de ViewSets (`cursos/api_views.py`) con `ModelViewSet`, filtros y búsqueda
+- [x] 6.6 Creación de enrutador `DefaultRouter` (`cursos/api_urls.py`) y conexión en `config/urls.py` con endpoints `/api/v1/` y JWT (`/api/token/`)
+- [x] 6.7 Verificación semántica de endpoints (códigos 200, 201, 204, 400, 401, 404) y suite de pruebas (`pruebas_api.http`)
+- [x] 6.8 Consumo desde el frontend mediante JavaScript (`fetch()`) para desacoplamiento cliente-servidor (`templates/catalogo_api.html`)
+- [x] 6.9 Documentación y preparación de defensa: `pasos_unidad_3.md` y actualización de `README.md` bajo "Unidad 3 / Evaluación 3"
 
 ## Prompts de IA documentados (indicador 10)
 
 - **Prompt Unidad 1 (Datos de prueba - Indicador 11):** "Genera un JSON con 9 cursos, 5 instructores y 4 categorías para un directorio de cursos, en español, con campos id, titulo, slug, descripcion, nivel, duracion_horas, precio, categoria_id, instructor_id" → resultado en `front/data/cursos.json`.
 - **Prompt Unidad 2 (Formularios y Validación en Servidor):** "Crea un ModelForm para Curso con validaciones de servidor para precio >= 0 y duración > 0, autogeneración de slug único mediante slugify y widgets con clases CSS personalizadas para formularios responsivos verde esmeralda".
 - **Prompt Unidad 2 (Seguridad y Control de Acceso):** "Estructura el flujo de autenticación nativo con django.contrib.auth, implementa protección de vistas de escritura/modificación/borrado mediante decorador @login_required, formularios POST blindados con {% csrf_token %} y redirecciones seguras de sesión".
-- **Auditoría Crítica Humana (Unidad 2):**
-  1. *Decisión de arquitectura:* Se mantuvo SQLite para el desarrollo ágil y se documentó la configuración de MySQL con sus 6 parámetros en `settings.py`.
-  2. *Auditoría de seguridad:* Se verificó que ninguna ruta de creación, edición o borrado quede expuesta a usuarios anónimos.
-  3. *Auditoría de integridad:* Se forzó la confirmación mediante método POST para la eliminación, evitando borrados accidentales por GET.
+- **Prompt Unidad 3 (API RESTful y Serialización Segura):** "Genera los ModelSerializer para Categoria, Instructor y Curso con Django REST Framework, listando los campos explícitamente sin usar `fields = '__all__'`, agregando validaciones de servidor para precio y duración, y enriqueciendo el JSON con campos de lectura para nombres de categoría e instructor".
+- **Prompt Unidad 3 (Seguridad Stateless con JWT):** "Configura autenticación stateless basada en JSON Web Tokens (JWT) con djangorestframework-simplejwt, protegiendo credenciales sensibles con variables de entorno python-dotenv, estableciendo permisos IsAuthenticatedOrReadOnly y configurando endpoints para obtención y refresco de tokens".
+- **Auditoría Crítica Humana (Unidad 3):**
+  1. *Riesgo de exposición silenciosa:* Se prohibió expresamente `fields = '__all__'` en todos los serializadores para no filtrar campos internos o sensibles.
+  2. *Riesgo de alucinación de campos:* Se cotejó que cada campo en `fields` exista literalmente en `cursos/models.py`.
+  3. *Seguridad de JWT:* Se verificó que ningún dato sensible (como contraseñas o hashes) viaje en el payload Base64 del JWT.
+  4. *Protección de credenciales:* Se extrajo la `SECRET_KEY` de `settings.py` hacia `.env`, garantizando que quede excluida del repositorio de GitHub.
 
 ## Cómo abrir cada parte
 

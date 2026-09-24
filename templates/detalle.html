@@ -37,10 +37,10 @@
             <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--emerald-100); display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
                 <span style="font-size: 0.85rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em;">Gestión del curso:</span>
                 <a href="{% url 'curso_editar' curso.slug %}" class="btn btn-secondary btn-sm" style="border: 1px solid var(--emerald-200);">
-                    ✏️ Editar curso
+                    Editar curso
                 </a>
                 <a href="{% url 'curso_eliminar' curso.slug %}" class="btn btn-danger btn-sm">
-                    🗑️ Eliminar
+                    Eliminar
                 </a>
             </div>
             {% endif %}
@@ -52,7 +52,7 @@
                 <h3>{{ curso.instructor.nombre }}</h3>
                 <p>{{ curso.instructor.especialidad }}</p>
                 <p>{{ curso.instructor.anios_experiencia }} años de experiencia</p>
-                <p style="font-size: 0.88rem; color: var(--emerald-800); font-weight: 600; margin: 8px 0 14px;">✉ {{ curso.instructor.email }}</p>
+                <p style="font-size: 0.88rem; color: var(--emerald-800); font-weight: 600; margin: 8px 0 14px;">Email: {{ curso.instructor.email }}</p>
                 <a class="btn" href="mailto:{{ curso.instructor.email }}">Contactar al instructor</a>
             </div>
         </aside>

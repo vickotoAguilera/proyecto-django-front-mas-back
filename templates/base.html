@@ -25,6 +25,9 @@
       <div class="navbar__links">
         <a href="{% url 'inicio' %}">Inicio</a>
         <a href="{% url 'inicio' %}#cursos">Cursos</a>
+        <a href="{% url 'catalogo_api' %}" style="display: inline-flex; align-items: center; font-weight: 600; color: #047857; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 5px 12px; border-radius: 8px; font-size: 0.88rem; text-decoration: none;">
+          Explorar Cursos
+        </a>
 
         {% if user.is_authenticated %}
           <!-- Solo visible para usuarios autenticados -->
@@ -36,7 +39,7 @@
             Nuevo Curso
           </a>
           <span style="font-size: 0.88rem; font-weight: 600; color: var(--emerald-800); background: var(--emerald-100); padding: 4px 10px; border-radius: 20px;">
-            👤 {{ user.username }}
+            {{ user.username }}
           </span>
           <form method="post" action="{% url 'logout' %}" style="display: inline; margin: 0;">
             {% csrf_token %}
@@ -62,7 +65,6 @@
       {% for message in messages %}
         <div class="alert alert--{{ message.tags }}">
           <div class="alert__content">
-            <span>{% if message.tags == 'success' %}✅{% elif message.tags == 'error' %}⚠️{% else %}ℹ️{% endif %}</span>
             <span>{{ message }}</span>
           </div>
           <button type="button" onclick="this.parentElement.remove()" class="alert__close" title="Cerrar aviso">&times;</button>
@@ -76,7 +78,7 @@
 
 
   <footer class="footer">
-    <p><strong>Academia Verde</strong> — Directorio de Cursos · Proyecto académico Django (Evaluación 1, Evaluación 2)</p>
+    <p><strong>Academia Verde</strong> — Directorio y Plataforma de Cursos Online · Todos los derechos reservados</p>
   </footer>
 
 </body>
