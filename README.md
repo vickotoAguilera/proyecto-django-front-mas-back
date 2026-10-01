@@ -451,6 +451,10 @@ Cálculo de conversión a Dólares y UF en tiempo real mediante consumo HTTP de 
 Endpoint propio que expone la integración y cálculo con el servicio externo para clientes REST:
 ![Endpoint Indicadores DRF](evidencias/api-externa-indicadores-drf.png)
 
+#### 7. Evidencia de Auditoría Crítica de IA en tiempo real (Indicador 7)
+Captura del prompt donde instruyo expresamente a la IA corregir y prohibir `fields = '__all__'` en los serializadores para garantizar el principio de mínimo privilegio y evitar exposición silenciosa de datos:
+![Prompt Auditoría Crítica de IA Unidad 3](evidencias/imagen-prompt-ia-seguridad-u3.png)
+
 ---
 
 ### Auditoría Crítica de Inteligencia Artificial (Unidad 3)

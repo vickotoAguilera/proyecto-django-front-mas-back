@@ -53,6 +53,9 @@ A continuación se documentan los prompts reales utilizados, el código propuest
   4. Se codificaron los métodos `validate_precio` y `validate_duracion_horas` para garantizar validación en el servidor antes de tocar la base de datos.
   5. En `create()`, se implementó la autogeneración de slug único mediante `slugify(titulo)` y `uuid.uuid4().hex[:6]` para prevenir colisiones de clave única en la base de datos.
 
+* **Evidencia visual del prompt de auditoría humana en tiempo real:**
+  ![Captura del prompt de auditoría humana](imagen-prompt-ia-seguridad-u3.png)
+
 ---
 
 ### Caso 2: Autenticación Stateless y Ciclo de Vida de Tokens (JWT)
