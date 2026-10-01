@@ -1,0 +1,111 @@
+### ====================================================================
+### SUITE DE PRUEBAS DE LA API RESTful — DIRECTORIO DE CURSOS (UNIDAD 3)
+### ====================================================================
+
+@baseUrl = http://127.0.0.1:8000
+
+### 1. OBTENER TOKEN JWT (LOGIN)
+# @name login
+POST {{baseUrl}}/api/token/
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "tu_password_aqui"
+}
+
+### Guardamos el token recibido
+@accessToken = {{login.response.body.access}}
+@refreshToken = {{login.response.body.refresh}}
+
+
+### 2. REFRESCAR ACCESS TOKEN CON REFRESH TOKEN
+POST {{baseUrl}}/api/token/refresh/
+Content-Type: application/json
+
+{
+  "refresh": "{{refreshToken}}"
+}
+
+
+### 3. CONSULTAR LISTADO DE CURSOS (Lectura pública GET - Código 200 OK)
+GET {{baseUrl}}/api/v1/cursos/
+Accept: application/json
+
+
+### 4. CONSULTAR LISTADO CON FILTROS (Por categoría y búsqueda)
+GET {{baseUrl}}/api/v1/cursos/?categoria=1&search=python
+Accept: application/json
+
+
+### 5. CONSULTAR CATEGORÍAS (GET - Código 200 OK)
+GET {{baseUrl}}/api/v1/categorias/
+Accept: application/json
+
+
+### 6. CONSULTAR INSTRUCTORES (GET - Código 200 OK)
+GET {{baseUrl}}/api/v1/instructores/
+Accept: application/json
+
+
+### 7. INTENTO DE CREAR CURSO SIN TOKEN (Seguridad: Código 401 Unauthorized esperado)
+POST {{baseUrl}}/api/v1/cursos/
+Content-Type: application/json
+
+{
+  "titulo": "Curso Hackeado Sin Token",
+  "descripcion": "Este intento debe ser rechazado con 401",
+  "nivel": "Básico",
+  "duracion_horas": 10,
+  "precio": 19990,
+  "categoria": 1,
+  "instructor": 1
+}
+
+
+### 8. CREAR CURSO CON TOKEN JWT (Escritura autorizada - Código 201 Created)
+POST {{baseUrl}}/api/v1/cursos/
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "titulo": "Arquitectura de Microservicios con Python",
+  "descripcion": "Aprende a diseñar y desplegar servicios desacoplados y APIs RESTful.",
+  "nivel": "Avanzado",
+  "duracion_horas": 45,
+  "precio": 39990,
+  "categoria": 1,
+  "instructor": 1
+}
+
+
+### 9. CONSULTAR DETALLE DEL CURSO CREADO (GET - Código 200 OK)
+GET {{baseUrl}}/api/v1/cursos/1/
+Accept: application/json
+
+
+### 10. ACTUALIZAR CURSO CON TOKEN JWT (PUT - Código 200 OK)
+PUT {{baseUrl}}/api/v1/cursos/1/
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "titulo": "Python desde Cero hasta Profesional (Actualizado)",
+  "descripcion": "Curso completo y actualizado de Python con enfoque profesional.",
+  "nivel": "Básico",
+  "duracion_horas": 40,
+  "precio": 29990,
+  "categoria": 1,
+  "instructor": 1
+}
+
+
+### 11. CONSULTAR RECURSO INEXISTENTE (Código 404 Not Found en JSON)
+GET {{baseUrl}}/api/v1/cursos/99999/
+Accept: application/json
+
+
+### 12. ELIMINAR CURSO CON TOKEN JWT (DELETE - Código 204 No Content)
+# Descomentar para probar borrado:
+# DELETE {{baseUrl}}/api/v1/cursos/1/
+# Authorization: Bearer {{accessToken}}

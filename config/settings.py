@@ -190,6 +190,15 @@ REST_FRAMEWORK = {
     # aca configuro la paginacion estandar de 10 elementos por pagina
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
+    # aca configuro la limitacion de tasa de peticiones (Throttling) contra ataques de fuerza bruta y DoS
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day',
+    },
 }
 
 # aca configuro los tiempos de expiracion y la firma criptografica de Simple JWT

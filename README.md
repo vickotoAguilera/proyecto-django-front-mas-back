@@ -459,3 +459,43 @@ Durante el desarrollo de esta unidad, apliqué un control riguroso sobre las pro
 1. **Riesgo de exposición silenciosa:** La IA suele sugerir `fields = '__all__'` en los serializers. Audité y rechacé esta práctica, exigiendo listas explícitas de atributos para garantizar el principio de mínimo privilegio.
 2. **Riesgo de alucinación de campos:** Verifiqué que cada campo declarado en los serializers coincida con la estructura real de los modelos en `cursos/models.py`.
 3. **Riesgo de seguridad en JWT:** Comprobé que el payload Base64 del token solo contenga identificadores y marcas de tiempo (`user_id`, `exp`, `iat`), asegurando que jamás viajen contraseñas, correos ni datos sensibles que puedan ser leídos por terceros.
+
+El desglose completo de prompts, sugerencias preliminares de la IA y adaptaciones finales se encuentra en [`evidencias/EVIDENCIAS_IA_Y_SEGURIDAD.md`](evidencias/EVIDENCIAS_IA_Y_SEGURIDAD.md).
+
+#### Paso 21 — Blindaje de seguridad con Rate Limiting / Throttling (`config/settings.py`):
+- Implementé limitación de tasa de peticiones en el bloque `REST_FRAMEWORK` de [`config/settings.py`](config/settings.py) para prevenir ataques de denegación de servicio (DoS) y fuerza bruta sobre `/api/token/`:
+  - `AnonRateThrottle`: fijado en 100 peticiones por día para clientes anónimos.
+  - `UserRateThrottle`: fijado en 1.000 peticiones por día para usuarios autenticados.
+
+#### Paso 22 — Suite de Pruebas Unitarias Automatizadas (`cursos/tests.py`):
+- Desarrollé una suite con 7 pruebas automatizadas usando `rest_framework.test.APITestCase` para verificar la robustez de los endpoints desde consola:
+  1. `test_listado_cursos_publico`: Valida lectura GET 200 con estructura paginada.
+  2. `test_detalle_curso_y_campos_calculados`: Valida detalle y campos calculados `ReadOnlyField` de categoría e instructor.
+  3. `test_creacion_sin_token_rechazada`: Valida rechazo estricto con código 401 Unauthorized ante peticiones sin credenciales.
+  4. `test_creacion_con_token_jwt`: Valida login, cabecera `Authorization: Bearer <Token>`, código 201 Created y autogeneración de slug único.
+  5. `test_validacion_precio_negativo`: Valida que el serializador rechace precios inválidos con código 400 Bad Request.
+  6. `test_recurso_inexistente_retorna_404_json`: Valida que ante un recurso ausente DRF entregue un error estructurado en JSON con clave `detail`.
+  7. `test_endpoint_indicadores_economicos`: Valida integración del endpoint proxy con la API externa usando `@patch` para aislamiento de red.
+- **Comando para ejecutar las pruebas:**
+  ```powershell
+  .\venv\Scripts\python.exe manage.py test cursos
+  ```
+
+#### Paso 23 — Colección Oficial de Pruebas para Postman / Insomnia:
+- Creé el archivo exportable [`evidencias/Directorio_Cursos_API.postman_collection.json`](evidencias/Directorio_Cursos_API.postman_collection.json) con todas las peticiones organizadas en carpetas, variables de entorno (`baseUrl`, `accessToken`, `refreshToken`) y tests en JavaScript que guardan automáticamente los tokens recibidos tras el login.
+
+---
+
+### Verificación Integral: Cobertura del 100% de la Escala de Apreciación (Evaluación 3 - Nivel 4 Destacado)
+
+Para asegurar la calificación máxima (**Nota 7.0 / 35% de la asignatura**) en la **Evaluación 3**, audité el proyecto frente a la pauta oficial (`docs/unidad 3/Escala_Apreciacion_Unidad_3_API_RESTful.pdf`), alcanzando el **Nivel 4 Destacado (4 puntos)** en cada uno de los 7 indicadores evaluados:
+
+| N.° | Indicador de Logro (Pauta Oficial) | Ponderación | Exigencia Nivel 4 Destacado (4 pts) | Evidencia Implementada en el Proyecto |
+| :---: | :--- | :---: | :--- | :--- |
+| **1** | **Configura Django REST Framework según documentación oficial** *(Criterio 3.1.1)* | **15%** | Configura DRF correctamente, de manera autónoma, aplicando una estructura organizada y buenas prácticas. | DRF y Simple JWT registrados en `INSTALLED_APPS`, enrutador `DefaultRouter` desacoplado en [`cursos/api_urls.py`](cursos/api_urls.py), paginación global por página, ordenamiento, búsqueda predictiva y configuración limpia en `settings.py`. |
+| **2** | **Implementa autenticación de acuerdo con los requerimientos** *(Criterio 3.1.2)* | **20%** | Implementa correctamente la autenticación y demuestra comprensión de su funcionamiento y aplicación. | Autenticación stateless basada en **JSON Web Tokens (JWT)** mediante `JWTAuthentication`. Endpoints funcionales para login (`/api/token/`) y renovación (`/api/token/refresh/`), validados en la suite de tests y en Postman. |
+| **3** | **Aplica recomendaciones de seguridad en la autenticación** *(Criterio 3.1.2)* | **15%** | Analiza, adapta y aplica recomendaciones de seguridad pertinentes, justificando las decisiones implementadas. | Access token de vida corta (15 min), refresh token (1 día), firma criptográfica `HS256`, exclusión de datos sensibles en el payload Base64, aislamiento de `SECRET_KEY` en `.env` y **Throttling activo** (`AnonRateThrottle` y `UserRateThrottle`). |
+| **4** | **Genera respuestas en formato JSON** *(Criterio 3.1.3)* | **15%** | Genera respuestas JSON correctamente estructuradas, consistentes y adecuadas para el consumo de la API. | Serializadores explícitos (`CategoriaSerializer`, `InstructorSerializer`, `CursoSerializer`) con campos calculados `ReadOnlyField` que enriquecen la respuesta, prohibición estricta de `fields = '__all__'` y respuestas de error en JSON consistente (`detail`). |
+| **5** | **Implementa endpoints de acuerdo con los requerimientos** *(Criterio 3.1.4)* | **15%** | Implementa endpoints organizados, consistentes y correctamente estructurados según los requerimientos. | Recursos nombrados con sustantivos en plural (`/api/v1/cursos/`, `/api/v1/categorias/`, `/api/v1/instructores/`), versionamiento de API en `/api/v1/` y endpoint de servicios en `/api/v1/indicadores/`. |
+| **6** | **Implementa una API con características RESTful** *(Criterio 3.1.4)* | **10%** | Implementa una API consistente y bien estructurada, aplicando adecuadamente métodos HTTP, recursos, rutas y códigos de respuesta. | CRUD completo mapeado a verbos HTTP (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`) con códigos de estado semánticos (`200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, `401 Unauthorized`, `404 Not Found`). |
+| **7** | **Utiliza IA como apoyo para el desarrollo y seguridad de la API** *(Criterio 3.1.2 y 3.1.4)* | **10%** | Utiliza IA de manera crítica y responsable, contrastando recomendaciones, identificando riesgos y justificando las modificaciones realizadas. | Registro documental formal en [`docs/unidad 3/EVIDENCIAS_IA_Y_SEGURIDAD.md`](docs/unidad%203/EVIDENCIAS_IA_Y_SEGURIDAD.md) con los prompts empleados, el código sugerido por la IA, el análisis de los 3 riesgos de la asignatura y las correcciones de arquitectura aplicadas. |

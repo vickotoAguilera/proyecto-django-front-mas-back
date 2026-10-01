@@ -1,0 +1,564 @@
+{
+	"info": {
+		"_postman_id": "9b1e3f84-c89b-4b47-a8a2-7fa6a8b79b90",
+		"name": "Directorio de Cursos API RESTful - Unidad 3",
+		"description": "Colección oficial de pruebas de endpoints para la evaluación de Unidad 3 (Django REST Framework + JWT). Cubre operaciones CRUD, códigos de estado semánticos (200, 201, 204, 400, 401, 404), filtros, paginación e integración con API externa.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://127.0.0.1:8000",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Autenticación Stateless (Simple JWT)",
+			"item": [
+				{
+					"name": "1.1 Obtener Par de Tokens (Login)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Contiene access y refresh token\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('access');",
+									"    pm.expect(jsonData).to.have.property('refresh');",
+									"    pm.collectionVariables.set(\"accessToken\", jsonData.access);",
+									"    pm.collectionVariables.set(\"refreshToken\", jsonData.refresh);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/token/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"token",
+								""
+							]
+						},
+						"description": "Entrega el access token (corta duración: 15 min) y el refresh token (larga duración: 1 día)."
+					}
+				},
+				{
+					"name": "1.2 Refrescar Access Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test(\"Nuevo access token obtenido\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('access');",
+									"    pm.collectionVariables.set(\"accessToken\", jsonData.access);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"{{refreshToken}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/token/refresh/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"token",
+								"refresh",
+								""
+							]
+						},
+						"description": "Genera un nuevo access token a partir del refresh token vigente."
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Cursos (CRUD y Filtros)",
+			"item": [
+				{
+					"name": "2.1 Listar Cursos (GET 200 OK - Público)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cursos/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"cursos",
+								""
+							]
+						}
+					}
+				},
+				{
+					"name": "2.2 Filtrar por Categoría y Búsqueda (GET 200 OK)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cursos/?categoria=1&search=python",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"cursos",
+								""
+							],
+							"query": [
+								{
+									"key": "categoria",
+									"value": "1"
+								},
+								{
+									"key": "search",
+									"value": "python"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "2.3 Detalle de un Curso (GET 200 OK)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cursos/1/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"cursos",
+								"1",
+								""
+							]
+						}
+					}
+				},
+				{
+					"name": "2.4 Intentar Crear Sin Token (POST 401 Unauthorized)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 401 Unauthorized\", function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Intento no autorizado\",\n    \"descripcion\": \"Debe fallar con 401\",\n    \"nivel\": \"Básico\",\n    \"duracion_horas\": 20,\n    \"precio\": 20000,\n    \"categoria\": 1,\n    \"instructor\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cursos/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"cursos",
+								""
+							]
+						}
+					}
+				},
+				{
+					"name": "2.5 Crear Curso con Token (POST 201 Created)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201 Created\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Microservicios con FastAPI y Django REST\",\n    \"descripcion\": \"Aprende a diseñar arquitecturas desacopladas y escalables.\",\n    \"nivel\": \"Avanzado\",\n    \"duracion_horas\": 36,\n    \"precio\": 34990,\n    \"categoria\": 1,\n    \"instructor\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cursos/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"cursos",
+								""
+							]
+						}
+					}
+				},
+				{
+					"name": "2.6 Actualizar Curso (PUT 200 OK)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200 OK\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Python desde Cero hasta Profesional (Edición Actualizada)\",\n    \"descripcion\": \"Curso completo con los últimos estándares y buenas prácticas.\",\n    \"nivel\": \"Básico\",\n    \"duracion_horas\": 45,\n    \"precio\": 29990,\n    \"categoria\": 1,\n    \"instructor\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cursos/1/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"cursos",
+								"1",
+								""
+							]
+						}
+					}
+				},
+				{
+					"name": "2.7 Validación: Precio Negativo (POST 400 Bad Request)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400 Bad Request\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"pm.test(\"Error de validacion en precio\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('precio');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Curso con precio inválido\",\n    \"descripcion\": \"El precio negativo no está permitido\",\n    \"nivel\": \"Básico\",\n    \"duracion_horas\": 10,\n    \"precio\": -1500,\n    \"categoria\": 1,\n    \"instructor\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cursos/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"cursos",
+								""
+							]
+						}
+					}
+				},
+				{
+					"name": "2.8 Consultar Recurso Inexistente (GET 404 Not Found)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404 Not Found\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"pm.test(\"Respuesta JSON con clave detail\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('detail');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cursos/999999/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"cursos",
+								"999999",
+								""
+							]
+						}
+					}
+				},
+				{
+					"name": "2.9 Eliminar Curso con Token (DELETE 204 No Content)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204 No Content\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/cursos/1/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"cursos",
+								"1",
+								""
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "3. Categorías e Instructores",
+			"item": [
+				{
+					"name": "3.1 Listar Categorías (GET 200 OK)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/categorias/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"categorias",
+								""
+							]
+						}
+					}
+				},
+				{
+					"name": "3.2 Listar Instructores (GET 200 OK)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/instructores/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"instructores",
+								""
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "4. API Externa (mindicador.cl)",
+			"item": [
+				{
+					"name": "4.1 Conversión Económica en Tiempo Real (GET 200 OK)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/api/v1/indicadores/?precio=29990",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"indicadores",
+								""
+							],
+							"query": [
+								{
+									"key": "precio",
+									"value": "29990"
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}

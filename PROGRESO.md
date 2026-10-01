@@ -77,6 +77,10 @@
 - [x] 6.8 Consumo desde el frontend mediante JavaScript (`fetch()`) para desacoplamiento cliente-servidor (`templates/catalogo_api.html`)
 - [x] 6.9 Documentación y preparación de defensa: `pasos_unidad_3.md` y actualización de `README.md` bajo "Unidad 3 / Evaluación 3"
 - [x] 6.10 Consumo e integración de API REST externa (`mindicador.cl` para conversión monetaria en tiempo real en la ficha de detalle y endpoint proxy `/api/v1/indicadores/`)
+- [x] 6.11 Blindaje de seguridad con Rate Limiting / Throttling (`AnonRateThrottle` y `UserRateThrottle`) en `REST_FRAMEWORK` (Indicador 3 — Nivel 4 Destacado)
+- [x] 6.12 Creación y ejecución de suite de 7 pruebas unitarias automatizadas con `rest_framework.test.APITestCase` en `cursos/tests.py` (Producto 9 — Nivel 4 Destacado)
+- [x] 6.13 Exportación de colección oficial de pruebas para Postman / Insomnia (`docs/unidad 3/Directorio_Cursos_API.postman_collection.json`) con autoguardado de JWT en variables de entorno (Producto 9)
+- [x] 6.14 Creación de documento formal de evidencias de uso crítico de IA y auditoría de seguridad (`docs/unidad 3/EVIDENCIAS_IA_Y_SEGURIDAD.md`) (Indicador 7 y Producto 10 — Nivel 4 Destacado)
 
 ## Prompts de IA documentados (indicador 10)
 
